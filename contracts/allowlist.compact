@@ -1,0 +1,73 @@
+/**
+ * allowlist.compact — Private Allowlist Access
+ *
+ * PUBLIC (on-chain, visible to anyone):
+ *   - members: a Merkle tree whose leaves are identity commitments (hashes).
+ *     Only the commitment hashes are public — never the underlying secret.
+ *   - nullifiers: a set of spent proofs, used to stop a single membership
+ *     from being claimed more than once.
+ *   - claims: a running count of successful access claims.
+ *
+ * PRIVATE (circuit input, never on-chain or transmitted):
+ *   - secret: a user's private identity secret. Only its hash ever appears
+ *     on-chain — as a leaf commitment (added by the admin) and, later, as
+ *     a nullifier (added by the user). The secret itself never leaves the
+ *     user's machine.
+ *   - path: the Merkle path proving the user's commitment is a leaf of the
+ *     tree. The path is a private witness — an observer never sees which
+ *     leaf (i.e. which member) is being proven.
+ *
+ * WHAT THE USER PROVES WITHOUT REVEALING:
+ *   - That they know a secret whose commitment is one of the leaves in the
+ *     on-chain allowlist tree — i.e. that they are an approved member —
+ *     without disclosing which leaf, or their secret.
+ *   - That this specific membership has not already been used to claim
+ *     access (via a one-time nullifier), without revealing who they are.
+ */
+pragma language_version >= 0.23;
+
+import CompactStandardLibrary;
+
+// ── Ledger state ─────────────────────────────────────────────────────────────
+// Depth-10 tree supports up to 1024 allowlisted members.
+export ledger members: MerkleTree<10, Bytes<32>>;
+export ledger nullifiers: Set<Bytes<32>>;
+export ledger claims: Counter;
+
+// ── Circuit: add_member ───────────────────────────────────────────────────────
+// Admin-side action: publishes a new identity commitment (a hash) as a leaf
+// in the allowlist tree. The commitment is a public hash — it reveals
+// nothing about the secret that produced it, only that "some identity
+// exists at this leaf". In a production deployment this circuit would be
+// gated to a contract owner; kept open here to keep the MVP simple.
+export circuit add_member(commitment: Bytes<32>): [] {
+  members.insertHash(disclose(commitment));
+}
+
+// ── Circuit: claim_access ─────────────────────────────────────────────────────
+// secret and path are PRIVATE circuit parameters — consumed inside the ZK
+// proof and never stored or transmitted on-chain.
+//
+// The proof guarantees:
+//   1. commitment = H(secret, "commitment") matches the path's leaf
+//   2. that leaf resolves to the current on-chain allowlist root
+//   3. a nullifier = H(secret, "nullifier") has not been used before
+//
+// disclose() is used deliberately on the nullifier only — the fact that
+// *some* membership was spent is public, but which member spent it is not.
+export circuit claim_access(secret: Bytes<32>, path: MerkleTreePath<10, Bytes<32>>): [] {
+  const commitment_tag: Bytes<32> = pad(32, "allowlist-commitment-v1");
+  const nullifier_tag: Bytes<32> = pad(32, "allowlist-nullifier-v1");
+
+  const commitment: Bytes<32> = persistentHash<[Bytes<32>, Bytes<32>]>([secret, commitment_tag]);
+  assert(commitment == path.leaf, "secret does not match the provided Merkle path leaf");
+
+  const root: MerkleTreeDigest = merkleTreePathRootNoLeafHash<10>(path);
+  assert(members.checkRoot(disclose(root)), "Merkle path does not resolve to the current allowlist root");
+
+  const nullifier: Bytes<32> = persistentHash<[Bytes<32>, Bytes<32>]>([secret, nullifier_tag]);
+  assert(!nullifiers.member(disclose(nullifier)), "access already claimed for this identity");
+
+  nullifiers.insert(disclose(nullifier));
+  claims.increment(1);
+}
