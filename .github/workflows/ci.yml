@@ -40,15 +40,23 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
           compact --version
 
-      - name: Compile counter contract
+      - name: Compile allowlist contract
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          compact compile contracts/counter.compact managed/counter
+          compact compile contracts/allowlist.compact managed/allowlist
 
       - name: Compile age-gate contract
         run: |
           export PATH="$HOME/.local/bin:$PATH"
           compact compile contracts/age-gate.compact managed/age-gate
 
+      - name: Compile counter contract
+        run: |
+          export PATH="$HOME/.local/bin:$PATH"
+          compact compile contracts/counter.compact managed/counter
+
       - name: Run test suite
         run: node --experimental-vm-modules node_modules/.bin/jest --testPathPattern=tests/ --forceExit
+
+      - name: Build frontend
+        run: npm run build
