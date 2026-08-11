@@ -9,7 +9,7 @@ import React, {
 import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
 import type { Subscription } from 'rxjs';
 import { connectToWallet, initializeProviders, type AgeGateProviders } from '../api/providers';
-import { joinAgeGate, type DeployedAgeGate, type AgeGateState } from '../api/contract';
+import { joinAllowlist, type DeployedAllowlist, type AllowlistState } from '../api/contract';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
 const NETWORK_ID = (import.meta.env.VITE_NETWORK_ID as string) || 'preprod';
@@ -23,12 +23,12 @@ export interface MidnightContextValue {
   walletError: string | null;
   connect: () => Promise<void>;
   disconnect: () => void;
-  contractState: AgeGateState | null;
+  contractState: AllowlistState | null;
   contractError: string | null;
   txStatus: TxStatus;
   txError: string | null;
-  verifyAge: (birthYear: number) => Promise<void>;
-  revokeAccess: () => Promise<void>;
+  addMember: (secretHex: string) => Promise<void>;
+  claimAccess: (secretHex: string) => Promise<void>;
 }
 
 export const MidnightContext = createContext<MidnightContextValue | null>(null);
@@ -37,14 +37,14 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
   const [walletStatus, setWalletStatus] = useState<WalletStatus>('disconnected');
   const [walletAddress, setWalletAddress] = useState<string | null>(null);
   const [walletError, setWalletError] = useState<string | null>(null);
-  const [contractState, setContractState] = useState<AgeGateState | null>(null);
+  const [contractState, setContractState] = useState<AllowlistState | null>(null);
   const [contractError, setContractError] = useState<string | null>(null);
   const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [txError, setTxError] = useState<string | null>(null);
 
   const connectedAPIRef = useRef<ConnectedAPI | null>(null);
   const providersRef = useRef<AgeGateProviders | null>(null);
-  const deployedRef = useRef<DeployedAgeGate | null>(null);
+  const deployedRef = useRef<DeployedAllowlist | null>(null);
   const stateSubRef = useRef<Subscription | null>(null);
 
   useEffect(() => () => { stateSubRef.current?.unsubscribe(); }, []);
@@ -62,7 +62,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
 
       if (CONTRACT_ADDRESS) {
         try {
-          const deployed = await joinAgeGate(providers, CONTRACT_ADDRESS);
+          const deployed = await joinAllowlist(providers, CONTRACT_ADDRESS);
           deployedRef.current = deployed;
           stateSubRef.current?.unsubscribe();
           stateSubRef.current = deployed.state$.subscribe({
@@ -71,7 +71,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
           });
         } catch (e: any) {
           const msg = e?.message ?? String(e);
-          console.error('joinAgeGate failed:', msg, e);
+          console.error('joinAllowlist failed:', msg, e);
           setContractError(msg.length > 200 ? msg.slice(0, 200) + '…' : msg);
         }
       }
@@ -97,7 +97,30 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     setTxError(null);
   }, []);
 
-  const verifyAge = useCallback(async (birthYear: number) => {
+  function friendlyError(err: any): string {
+    let root: any = err;
+    while (root?.cause) root = root.cause;
+    while (root?.failure) root = root.failure;
+    const msg: string = root?.message ?? err?.message ?? String(err);
+    if (msg.includes('dust') || msg.includes('Dust') || msg.includes('DUST')) {
+      return 'No DUST tokens — open Lace → Tokens → Generate tDUST, then retry.';
+    }
+    if (msg.includes('not on the allowlist')) {
+      return 'This secret is not on the allowlist. Ask an admin to add it first.';
+    }
+    if (msg.includes('already claimed') || msg.includes('member of nullifiers')) {
+      return 'Access has already been claimed with this secret.';
+    }
+    if (msg.includes('does not match')) {
+      return 'This secret does not match any allowlist entry.';
+    }
+    if (msg.toLowerCase().includes('reject') || msg.toLowerCase().includes('cancel')) {
+      return 'Transaction cancelled.';
+    }
+    return msg.length > 150 ? msg.slice(0, 150) + '…' : msg;
+  }
+
+  const addMember = useCallback(async (secretHex: string) => {
     if (!deployedRef.current) {
       setTxStatus('failed');
       setTxError('Contract not loaded — disconnect and reconnect your wallet.');
@@ -106,43 +129,35 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     setTxStatus('proving');
     setTxError(null);
     try {
-      await deployedRef.current.verifyAge(birthYear);
+      await deployedRef.current.addMember(secretHex);
       setTxStatus('confirmed');
     } catch (err: any) {
       setTxStatus('failed');
-      let root: any = err;
-      while (root?.cause) root = root.cause;
-      while (root?.failure) root = root.failure;
-      const msg: string = root?.message ?? err?.message ?? String(err);
-      if (msg.includes('dust') || msg.includes('Dust') || msg.includes('DUST')) {
-        setTxError('No DUST tokens — open Lace → Tokens → Generate tDUST, then retry.');
-      } else if (msg.includes('assert') || msg.includes('18') || msg.includes('positive')) {
-        setTxError('Age verification failed — you must be born in 2008 or earlier.');
-      } else if (msg.toLowerCase().includes('reject') || msg.toLowerCase().includes('cancel')) {
-        setTxError('Transaction cancelled.');
-      } else {
-        setTxError(msg.length > 150 ? msg.slice(0, 150) + '…' : msg);
-      }
+      setTxError(friendlyError(err));
     }
   }, []);
 
-  const revokeAccess = useCallback(async () => {
-    if (!deployedRef.current) return;
+  const claimAccess = useCallback(async (secretHex: string) => {
+    if (!deployedRef.current) {
+      setTxStatus('failed');
+      setTxError('Contract not loaded — disconnect and reconnect your wallet.');
+      return;
+    }
     setTxStatus('proving');
     setTxError(null);
     try {
-      await deployedRef.current.revokeAccess();
+      await deployedRef.current.claimAccess(secretHex);
       setTxStatus('confirmed');
-    } catch (e: any) {
+    } catch (err: any) {
       setTxStatus('failed');
-      setTxError(e?.message ?? 'Revoke failed');
+      setTxError(friendlyError(err));
     }
   }, []);
 
   return (
     <MidnightContext.Provider value={{
       walletStatus, walletAddress, walletError, connect, disconnect,
-      contractState, contractError, txStatus, txError, verifyAge, revokeAccess,
+      contractState, contractError, txStatus, txError, addMember, claimAccess,
     }}>
       {children}
     </MidnightContext.Provider>

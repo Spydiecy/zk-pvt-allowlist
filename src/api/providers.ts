@@ -33,7 +33,7 @@ import semver from 'semver';
 
 const COMPATIBLE_CONNECTOR_API_VERSION = '4.x';
 
-export type AgeGateCircuitKeys = 'verify_age' | 'revoke_access';
+export type AllowlistCircuitKeys = 'add_member' | 'claim_access';
 
 export interface AgeGateProviders {
   privateStateProvider: any;
@@ -107,9 +107,9 @@ export async function initializeProviders(connectedAPI: ConnectedAPI): Promise<A
   // Must be called before any contract operation
   setNetworkId(config.networkId);
 
-  const zkConfigPath = `${window.location.origin}/managed/age-gate`;
+  const zkConfigPath = `${window.location.origin}/managed/allowlist`;
 
-  const zkConfigProvider = new FetchZkConfigProvider<AgeGateCircuitKeys>(
+  const zkConfigProvider = new FetchZkConfigProvider<AllowlistCircuitKeys>(
     zkConfigPath,
     fetch.bind(window),
   );
