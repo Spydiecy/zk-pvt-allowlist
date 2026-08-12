@@ -64,10 +64,14 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
         try {
           const deployed = await joinAllowlist(providers, CONTRACT_ADDRESS);
           deployedRef.current = deployed;
+
+          // Immediate first read — don't wait on the live subscription's first emission.
+          deployed.refreshState().then(setContractState).catch(() => {});
+
           stateSubRef.current?.unsubscribe();
           stateSubRef.current = deployed.state$.subscribe({
             next: (s) => setContractState(s),
-            error: (e) => console.error('State stream error:', e),
+            error: (e) => console.error('State stream error (falling back to manual refresh):', e),
           });
         } catch (e: any) {
           const msg = e?.message ?? String(e);
@@ -131,6 +135,8 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     try {
       await deployedRef.current.addMember(secretHex);
       setTxStatus('confirmed');
+      // Force-refresh immediately — don't rely solely on the live subscription.
+      deployedRef.current.refreshState().then(setContractState).catch(() => {});
     } catch (err: any) {
       setTxStatus('failed');
       setTxError(friendlyError(err));
@@ -148,6 +154,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     try {
       await deployedRef.current.claimAccess(secretHex);
       setTxStatus('confirmed');
+      deployedRef.current.refreshState().then(setContractState).catch(() => {});
     } catch (err: any) {
       setTxStatus('failed');
       setTxError(friendlyError(err));

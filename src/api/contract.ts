@@ -28,6 +28,8 @@ export interface DeployedAllowlist {
   addMember: (secretHex: string) => Promise<void>;
   claimAccess: (secretHex: string) => Promise<void>;
   hasClaimed: (secretHex: string) => Promise<boolean>;
+  /** One-shot fetch of the current on-chain state, bypassing the live subscription. */
+  refreshState: () => Promise<AllowlistState>;
 }
 
 const PRIVATE_STATE_KEY = 'allowlist-private';
@@ -99,26 +101,40 @@ export async function joinAllowlist(
     initialPrivateState: {},
   });
 
+  function stateFromLedger(l: any): AllowlistState {
+    return {
+      memberCount: BigInt(l.members.firstFree()),
+      claims: BigInt(l.claims ?? 0),
+      isFull: Boolean(l.members.isFull()),
+    };
+  }
+
   const state$: Observable<AllowlistState> = providers.publicDataProvider
     .contractStateObservable(address as any, { type: 'latest' })
     .pipe(
       map((contractState: any) => {
         try {
-          const l = Allowlist.ledger(contractState.data ?? contractState);
-          return {
-            memberCount: BigInt(l.members.firstFree()),
-            claims: BigInt(l.claims ?? 0),
-            isFull: Boolean(l.members.isFull()),
-          };
+          return stateFromLedger(Allowlist.ledger(contractState.data ?? contractState));
         } catch {
           return { memberCount: 0n, claims: 0n, isFull: false };
         }
       }),
     );
 
+  async function readCurrentLedger() {
+    const currentState = await providers.publicDataProvider.queryContractState(address);
+    return Allowlist.ledger(currentState.data ?? currentState);
+  }
+
   return {
     address,
     state$,
+
+    /** One-shot fetch — used to force-refresh the UI right after a tx confirms,
+     *  since the live subscription can lag behind indexer updates. */
+    async refreshState(): Promise<AllowlistState> {
+      return stateFromLedger(await readCurrentLedger());
+    },
 
     /** Admin action: publish a new member's commitment hash on-chain. */
     async addMember(secretHex: string): Promise<void> {
@@ -137,8 +153,7 @@ export async function joinAllowlist(
       const commitment = commitmentFor(secret);
 
       // Read the current on-chain tree to locate this member's leaf and path.
-      const currentState = await providers.publicDataProvider.queryContractState(address);
-      const l = Allowlist.ledger(currentState.data ?? currentState);
+      const l = await readCurrentLedger();
       const path = l.members.findPathForLeaf(commitment);
       if (!path) {
         throw new Error('This identity is not on the allowlist.');
@@ -155,8 +170,7 @@ export async function joinAllowlist(
     async hasClaimed(secretHex: string): Promise<boolean> {
       const secret = hexToBytes32(secretHex);
       const nullifier = nullifierFor(secret);
-      const currentState = await providers.publicDataProvider.queryContractState(address);
-      const l = Allowlist.ledger(currentState.data ?? currentState);
+      const l = await readCurrentLedger();
       return Boolean(l.nullifiers.member(nullifier));
     },
   };
