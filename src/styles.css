@@ -133,7 +133,7 @@ body {
 .badge-red   { background: rgba(239,68,68,0.12);  color: var(--red);   border: 1px solid rgba(239,68,68,0.2); }
 .badge-dim   { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
 
-/* ── Age Gate form card ───────────────────────────────────────────────────── */
+/* ── Allowlist form card ──────────────────────────────────────────────────── */
 .gate-card {
   background: var(--surface);
   border: 1px solid var(--border);
