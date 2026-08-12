@@ -41,7 +41,7 @@ export ledger claims: Counter;
 // exists at this leaf". In a production deployment this circuit would be
 // gated to a contract owner; kept open here to keep the MVP simple.
 export circuit add_member(commitment: Bytes<32>): [] {
-  members.insertHash(disclose(commitment));
+  members.insert(disclose(commitment));
 }
 
 // ── Circuit: claim_access ─────────────────────────────────────────────────────
@@ -62,7 +62,7 @@ export circuit claim_access(secret: Bytes<32>, path: MerkleTreePath<10, Bytes<32
   const commitment: Bytes<32> = persistentHash<[Bytes<32>, Bytes<32>]>([secret, commitment_tag]);
   assert(commitment == path.leaf, "secret does not match the provided Merkle path leaf");
 
-  const root: MerkleTreeDigest = merkleTreePathRootNoLeafHash<10>(path);
+  const root: MerkleTreeDigest = merkleTreePathRoot<10, Bytes<32>>(path);
   assert(members.checkRoot(disclose(root)), "Merkle path does not resolve to the current allowlist root");
 
   const nullifier: Bytes<32> = persistentHash<[Bytes<32>, Bytes<32>]>([secret, nullifier_tag]);
