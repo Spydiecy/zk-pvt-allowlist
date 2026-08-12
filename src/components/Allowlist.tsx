@@ -30,11 +30,6 @@ export function Allowlist() {
   const isConnected = walletStatus === 'connected';
   const isBusy = txStatus === 'proving';
 
-  function handleGenerateSecret() {
-    const s = randomSecretHex();
-    setSecret(s);
-  }
-
   async function handleClaim(e: React.FormEvent) {
     e.preventDefault();
     if (!isConnected || isBusy || secret.length !== 64) return;
@@ -128,6 +123,15 @@ export function Allowlist() {
                   </span>
                 </div>
 
+                <button
+                  type="button"
+                  className="btn btn-ghost btn-sm"
+                  style={{ marginBottom: 16 }}
+                  onClick={() => setSecret(randomSecretHex())}
+                >
+                  🎲 Generate Test Secret
+                </button>
+
                 <div className="zk-disclaimer">
                   <span className="zk-icon">⚡</span>
                   <span>
@@ -214,16 +218,6 @@ export function Allowlist() {
             <p style={{ textAlign: 'center', color: 'var(--muted)', fontSize: 13, marginTop: 16 }}>
               Connect your Lace wallet to continue
             </p>
-          )}
-
-          {isConnected && (
-            <button
-              className="btn btn-ghost btn-sm"
-              style={{ marginTop: 12 }}
-              onClick={handleGenerateSecret}
-            >
-              🎲 Generate a Test Secret
-            </button>
           )}
         </div>
       </div>

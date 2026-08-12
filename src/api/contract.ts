@@ -32,6 +32,28 @@ export interface DeployedAllowlist {
 
 const PRIVATE_STATE_KEY = 'allowlist-private';
 
+// callTx waits indefinitely for on-chain finalization via the indexer
+// (see @midnight-ntwrk/midnight-js-contracts submitTx docs). Preprod block
+// finalization can occasionally stall, so we bound the wait client-side —
+// the transaction itself is unaffected; this only stops our UI from
+// spinning forever with no feedback.
+const CONFIRMATION_TIMEOUT_MS = 120_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(
+        `${label} is taking longer than expected (over ${Math.round(ms / 1000)}s). ` +
+        `The transaction may still confirm — check Lace or the indexer before retrying.`,
+      ));
+    }, ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (err) => { clearTimeout(timer); reject(err); },
+    );
+  });
+}
+
 // ── Hashing helpers — mirror the contract's persistentHash([secret, tag]) ────
 const PAIR_TYPE = new CompactTypeVector(2, new CompactTypeBytes(32));
 
@@ -102,7 +124,11 @@ export async function joinAllowlist(
     async addMember(secretHex: string): Promise<void> {
       const secret = hexToBytes32(secretHex);
       const commitment = commitmentFor(secret);
-      await (found as any).callTx.add_member(commitment);
+      await withTimeout(
+        (found as any).callTx.add_member(commitment),
+        CONFIRMATION_TIMEOUT_MS,
+        'Add member confirmation',
+      );
     },
 
     /** User action: prove membership and claim access without revealing identity. */
@@ -118,7 +144,11 @@ export async function joinAllowlist(
         throw new Error('This identity is not on the allowlist.');
       }
 
-      await (found as any).callTx.claim_access(secret, path);
+      await withTimeout(
+        (found as any).callTx.claim_access(secret, path),
+        CONFIRMATION_TIMEOUT_MS,
+        'Claim access confirmation',
+      );
     },
 
     /** Local-only check: has this secret's nullifier already been spent? */
