@@ -2,36 +2,36 @@
 
 ## What is the product, and who uses it?
 
-ZK Age Gate is an age verification tool that lets users prove they're old enough to access something — without handing over their actual date of birth or any identity document.
+Private Allowlist is a membership-proof system for gated access. An admin publishes a list of approved identities as commitment hashes in an on-chain Merkle tree. Anyone on that list can prove they belong — and claim access — without revealing their secret, their position in the tree, or their identity to anyone watching the chain.
 
-The primary users are platforms that need to enforce age restrictions: adult content sites, online gaming platforms with age ratings, alcohol delivery services, regulated financial products. Right now all of these ask for your real birthdate, a government ID, or a credit card as a proxy for age. That's overkill. The only question that needs answering is "are you 18 or older?" — and ZK Age Gate answers exactly that, nothing more.
-
-A secondary use case is DAOs and token-gated communities that want to restrict participation to adults without building any identity infrastructure. Connect your wallet, prove eligibility, get in.
+The people who use this are anyone running a gated system today that leaks its member list as a side effect of being on-chain: NFT projects running allowlist mints, DAOs restricting governance to vetted members, DeFi protocols gating access to KYC'd users, and token-gated communities. Right now, most of these either publish the entire allowlist publicly (leaking every approved wallet) or rely on a centralized off-chain gatekeeper (reintroducing a trust bottleneck). Private Allowlist removes both problems — the rules are enforced on-chain, but the membership list stays private.
 
 ## Why Midnight specifically?
 
-The whole point of this product breaks down if the verification leaks any data. On a transparent chain, even a "yes/no" age check would require putting either the birth year or some hash of it on-chain — and hashes can be brute-forced for a 4-digit year in milliseconds.
+The core requirement here — proving set membership without revealing which member you are — is fundamentally impossible on a transparent chain without either publishing the whole set or trusting a server. If you put a Merkle root on a transparent chain and ask users to submit their path, the path itself reveals their exact position and (combined with any other on-chain activity) usually their identity.
 
-Midnight solves this with zero-knowledge circuits. The birth year is a private witness that never leaves the user's machine. The proof is generated locally in Lace wallet, verified on-chain, and the ledger only ever records `access_granted: true`. There's nothing to leak and nothing to brute-force.
+Midnight solves this because the Merkle path and the identity secret are private circuit witnesses — they're consumed inside a zero-knowledge proof and never appear on-chain in any form. The chain only ever sees a nullifier (a one-way hash proving "this specific membership was used") and a root (a commitment to the whole tree). Nobody, including the contract itself, can work backward from a nullifier to figure out which leaf produced it.
 
-You could build a server-side version of this on any chain, but then you're trusting a server operator with the data. Midnight removes that trust requirement entirely — the math is the guarantee.
+You could try to fake this on a transparent chain with off-chain hashing and a trusted relayer, but that just moves the privacy problem to whoever runs the relayer. Midnight removes the need for a trusted third party entirely — the proof is the guarantee.
 
 ## Data Model
 
-| Data Point        | Type            | Disclosed To |
-|-------------------|-----------------|--------------|
-| `access_granted`  | Public ledger   | Everyone     |
-| `verifications`   | Public counter  | Everyone     |
-| Birth year        | Private witness | No one       |
-| Exact age         | Derived private | No one       |
-| Eligibility proof | ZK proof        | Chain (verifies without reading input) |
+| Data Point                    | Type             | Disclosed To |
+|--------------------------------|------------------|--------------|
+| Merkle tree root               | Public ledger    | Everyone     |
+| Nullifier (per claim)          | Public set entry | Everyone (but unlinkable to any specific member) |
+| Total member count             | Public counter   | Everyone     |
+| Total claims                   | Public counter   | Everyone     |
+| Member's identity secret       | Private witness  | No one       |
+| Merkle path to a member's leaf | Private witness  | No one       |
+| Which leaf belongs to which member | Never computed on-chain | No one |
 
 ## Mainnet Feasibility
 
-Yes, this is realistic for Mainnet by Level 6. The core circuit is already written, compiled, and deployed on Preprod. The main things to figure out before Mainnet are:
+Yes — this is realistic to reach Mainnet by Level 6, and the core primitive (Merkle membership proof + nullifier) is already a proven pattern used by production ZK systems like Tornado Cash and Semaphore. The contract logic is done, tested, and deployed on Preprod. Before Mainnet, three things need attention:
 
-1. **Year handling** — the current circuit hardcodes 2026 as the current year. Before Mainnet this needs to pull from a trusted oracle or be replaced with a block-time-based check using Midnight's kernel API.
-2. **Reusability** — right now any wallet can call `verify_age` on any contract instance. A production version would tie proofs to specific user sessions or commitments so one proof can't be replayed.
-3. **UX** — users need clearer guidance on setting up Lace and the proof server. A hosted proof server option (for users who don't want to run Docker) would significantly lower the barrier.
+1. **Admin access control** — `add_member` is currently open to any caller for MVP simplicity. Production needs this gated to a contract owner, likely via a signature check or an owner address stored at construction time.
+2. **Tree management UX** — right now the frontend calls `findPathForLeaf` by scanning the tree, which is fine at MVP scale but would need indexing support for allowlists with thousands of members.
+3. **Secret distribution** — admins currently generate and share secrets out-of-band (e.g. a message). A production version might integrate with existing identity systems (wallet signatures, verifiable credentials) so users don't need to manage a separate secret.
 
-None of these are blockers — they're normal productization work. The privacy model and core circuit logic are solid.
+None of these change the core privacy guarantee — they're integration and access-control work on top of a circuit that already does the hard cryptographic part correctly.

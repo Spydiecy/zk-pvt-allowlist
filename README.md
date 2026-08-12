@@ -1,37 +1,47 @@
-# ZK Age Gate
+# Private Allowlist
 
-![CI](https://github.com/Spydiecy/midnight-zk-age-gate/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Spydiecy/midnight-private-allowlist/actions/workflows/ci.yml/badge.svg)
 
-> Prove you're 18+ without revealing your age. Built on Midnight Network.
+> Prove you're on the allowlist without revealing who you are. Built on Midnight Network.
 
 ## Live Demo
 
-**https://midnight-age-gate.vercel.app**
+[PASTE PREPROD DEMO URL AFTER DEPLOYING FRONTEND]
 
 ## Contract Address
 
 | Network | Address |
 |---------|---------|
-| Preprod | `8c23f1893c64a9a323981c9c213534f8e4539f339ab69c3c0c7ac8b46ee1f037` |
+| Preprod | `ae31c808e8023b89f857b6dd0cdc92d6bc4978049ba3f65d6206ab35c92280f3` |
 
-## What This Does
+## What This Product Does
 
-Enter your birth year. Lace wallet generates a zero-knowledge proof locally that `2026 − birth_year ≥ 18`. The proof is verified on-chain. The blockchain records only `access_granted: true` — your birth year never leaves your device.
+Private Allowlist lets an admin publish a gated list of approved identities on-chain — and lets members prove they're on that list without revealing which entry is theirs. An admin commits each member's identity as a hash (a "commitment") into an on-chain Merkle tree. A member later proves membership by supplying their private secret and a Merkle path as witnesses to a zero-knowledge circuit — the proof shows the commitment is a real leaf of the tree, without disclosing the secret, the leaf position, or the member's identity.
+
+This solves a problem every token-gated mint, DAO membership check, and KYC'd DeFi product runs into today: allowlists are almost always public, leaking every approved address to anyone watching the chain. Private Allowlist keeps the list's *contents* private while keeping its *membership rules* fully verifiable — a Merkle root is public, individual entries are not.
+
+Midnight is the only practical way to build this. On a transparent chain, "checking membership" requires reading the list, which means the list itself is public. Midnight's Compact circuits let the membership check happen entirely in zero-knowledge — the chain verifies a mathematical proof instead of reading the data.
 
 ## Privacy Model
 
-- **PUBLIC:** `access_granted` (bool), `verifications` (counter) — visible to anyone on-chain
-- **PRIVATE:** `birth_year` — a circuit input processed locally, never stored or transmitted
-- **PROVED without revealing:** that the user is at least 18 years old
+- **PUBLIC (on-chain, anyone can see):**
+  - The Merkle root of the allowlist tree (updated each time a member is added)
+  - The set of nullifiers — one per successful claim, proving *a* claim happened
+  - The total count of members and total claims
 
-## Privacy Claim
+- **PRIVATE (private witness, never on-chain):**
+  - Each member's identity secret
+  - The Merkle path proving a specific secret's commitment is a tree leaf
+  - Which leaf (i.e. which member) is being proven at claim time
 
-An on-chain observer sees `access_granted = true` and a verification count. They cannot determine the user's birth year, exact age, or any personal data. The ZK proof guarantees the computation was done correctly without revealing the input that produced it.
+- **What the user PROVES without revealing:**
+  - That they know a secret whose commitment exists somewhere in the on-chain allowlist tree
+  - That this specific membership has not already been used to claim access
 
 ## Tech Stack
 
 - Midnight Network (Preprod)
-- Compact — ZK smart contract language
+- Compact — ZK smart contract language, `MerkleTree<10, Bytes<32>>` ledger type
 - Midnight.js SDK v4.1.1
 - DApp Connector API v4.0.1
 - React 19 + Vite 6
@@ -39,9 +49,7 @@ An on-chain observer sees `access_granted = true` and a verification count. They
 
 ## Prerequisites
 
-- [Lace wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) installed in Chrome/Edge
-  - Network → **Preprod**
-  - Proof Server → `http://localhost:6300`
+- [Lace wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) — set Network to **Preprod**, Proof Server to `http://localhost:6300`
 - Docker Desktop running
 - Node.js v22+
 
@@ -49,13 +57,13 @@ An on-chain observer sees `access_granted = true` and a verification count. They
 
 ```bash
 # Clone
-git clone https://github.com/Spydiecy/midnight-zk-age-gate.git
-cd midnight-zk-age-gate
+git clone https://github.com/Spydiecy/midnight-private-allowlist.git
+cd midnight-private-allowlist
 
 # Install
 npm install --legacy-peer-deps
 
-# Start proof server (required — runs locally so private data never leaves your machine)
+# Start the local proof server (required — private data never leaves your machine)
 docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0
 
 # Generate tDUST in Lace: Tokens → Generate tDUST → confirm
@@ -71,22 +79,16 @@ npm run dev
 npm run test:run
 ```
 
-10 tests passing — circuit logic, state transitions, privacy isolation.
+32 tests passing — circuit logic, state transitions, and privacy isolation across the allowlist, age-gate, and counter contracts.
 
 ## CI/CD
 
-GitHub Actions runs on every push to `main` and on all pull requests. The pipeline:
-1. Installs Node.js v22 and project dependencies
-2. Installs the Compact compiler
-3. Compiles both contracts (`counter.compact` and `age-gate.compact`)
-4. Runs the full test suite
+GitHub Actions runs on every push to `main` and on all pull requests. The pipeline installs dependencies, installs the Compact compiler, compiles all three contracts, runs the full test suite, and builds the production frontend. See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
 
-See [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+## Usage Guide
 
-## Demo Video
+See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrough.
 
-[PASTE YOUTUBE LINK AFTER RECORDING]
+## Product X Profile
 
-## Product Proposal
-
-See [PROPOSAL.md](./PROPOSAL.md)
+[PASTE X PROFILE LINK AFTER CREATING THE ACCOUNT]
