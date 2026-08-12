@@ -11,7 +11,7 @@ import {
   CompactTypeBytes,
 } from '@midnight-ntwrk/midnight-js-protocol/compact-runtime';
 import { type Observable, map } from 'rxjs';
-import type { AgeGateProviders } from './providers';
+import type { AgeGateProviders } from './providers.js';
 
 // Static import — Vite processes this file and rewrites bare imports to URLs
 import * as Allowlist from '../contract/allowlist.js';
