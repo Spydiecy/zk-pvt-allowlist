@@ -1,6 +1,6 @@
 # Private Allowlist
 
-![CI](https://github.com/Spydiecy/midnight-private-allowlist/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Spydiecy/zk-pvt-allowlist/actions/workflows/ci.yml/badge.svg)
 
 > Prove you're on the allowlist without revealing who you are. Built on Midnight Network.
 
@@ -57,8 +57,8 @@ Midnight is the only practical way to build this. On a transparent chain, "check
 
 ```bash
 # Clone
-git clone https://github.com/Spydiecy/midnight-private-allowlist.git
-cd midnight-private-allowlist
+git clone https://github.com/Spydiecy/zk-pvt-allowlist.git
+cd zk-pvt-allowlist
 
 # Install
 npm install --legacy-peer-deps
