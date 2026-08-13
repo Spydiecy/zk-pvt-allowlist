@@ -1,5 +1,6 @@
 import React from 'react';
 import { useMidnight } from '../contexts/useMidnight.tsx';
+import { WalletIcon, LockIcon } from './icons';
 
 export function WalletConnect() {
   const { walletStatus, walletAddress, walletError, connect, disconnect } = useMidnight();
@@ -36,7 +37,7 @@ export function WalletConnect() {
       <div className="wallet-area" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
         <div className="wallet-error">
           {isLocked
-            ? '🔒 Lace service worker is locked. In Lace: lock the wallet → enter password → retry.'
+            ? <><LockIcon size={13} /> Lace service worker is locked. In Lace: lock the wallet → enter password → retry.</>
             : walletError}
         </div>
         <button className="btn btn-primary btn-sm" onClick={connect}>Retry</button>
@@ -46,7 +47,7 @@ export function WalletConnect() {
 
   return (
     <button className="btn btn-primary" onClick={connect}>
-      Connect Lace
+      <WalletIcon size={14} /> Connect Lace
     </button>
   );
 }
