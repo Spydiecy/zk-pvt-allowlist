@@ -6,7 +6,7 @@
 
 ## Live Demo
 
-[PASTE PREPROD DEMO URL AFTER DEPLOYING FRONTEND]
+[zk-pvt-allowlist.vercel.app](https://zk-pvt-allowlist.vercel.app/)
 
 ## Contract Address
 
