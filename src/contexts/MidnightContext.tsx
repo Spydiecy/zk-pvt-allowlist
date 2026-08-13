@@ -10,12 +10,14 @@ import type { ConnectedAPI } from '@midnight-ntwrk/dapp-connector-api';
 import type { Subscription } from 'rxjs';
 import { connectToWallet, initializeProviders, type AgeGateProviders } from '../api/providers';
 import { joinAllowlist, type DeployedAllowlist, type AllowlistState } from '../api/contract';
+import { useToast } from './ToastContext';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
 const NETWORK_ID = (import.meta.env.VITE_NETWORK_ID as string) || 'preprod';
 
 export type WalletStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
 export type TxStatus = 'idle' | 'proving' | 'confirmed' | 'failed';
+export type LastAction = 'add_member' | 'claim_access' | null;
 
 export interface MidnightContextValue {
   walletStatus: WalletStatus;
@@ -27,8 +29,10 @@ export interface MidnightContextValue {
   contractError: string | null;
   txStatus: TxStatus;
   txError: string | null;
+  lastAction: LastAction;
   addMember: (secretHex: string) => Promise<void>;
   claimAccess: (secretHex: string) => Promise<void>;
+  resetTx: () => void;
 }
 
 export const MidnightContext = createContext<MidnightContextValue | null>(null);
@@ -41,7 +45,9 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
   const [contractError, setContractError] = useState<string | null>(null);
   const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [txError, setTxError] = useState<string | null>(null);
+  const [lastAction, setLastAction] = useState<LastAction>(null);
 
+  const toast = useToast();
   const connectedAPIRef = useRef<ConnectedAPI | null>(null);
   const providersRef = useRef<AgeGateProviders | null>(null);
   const deployedRef = useRef<DeployedAllowlist | null>(null);
@@ -80,11 +86,14 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
         }
       }
       setWalletStatus('connected');
+      toast.success('Wallet connected', { message: unshieldedAddress.slice(0, 14) + '…' + unshieldedAddress.slice(-6) });
     } catch (e: any) {
       setWalletStatus('error');
-      setWalletError(e?.message ?? 'Failed to connect wallet');
+      const msg = e?.message ?? 'Failed to connect wallet';
+      setWalletError(msg);
+      toast.error('Connection failed', { message: msg.length > 140 ? msg.slice(0, 140) + '…' : msg });
     }
-  }, []);
+  }, [toast]);
 
   const disconnect = useCallback(() => {
     stateSubRef.current?.unsubscribe();
@@ -132,6 +141,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     }
     setTxStatus('proving');
     setTxError(null);
+    setLastAction('add_member');
     try {
       await deployedRef.current.addMember(secretHex);
       setTxStatus('confirmed');
@@ -151,6 +161,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     }
     setTxStatus('proving');
     setTxError(null);
+    setLastAction('claim_access');
     try {
       await deployedRef.current.claimAccess(secretHex);
       setTxStatus('confirmed');
@@ -161,10 +172,17 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const resetTx = useCallback(() => {
+    setTxStatus('idle');
+    setTxError(null);
+    setLastAction(null);
+  }, []);
+
   return (
     <MidnightContext.Provider value={{
       walletStatus, walletAddress, walletError, connect, disconnect,
-      contractState, contractError, txStatus, txError, addMember, claimAccess,
+      contractState, contractError, txStatus, txError, lastAction,
+      addMember, claimAccess, resetTx,
     }}>
       {children}
     </MidnightContext.Provider>
