@@ -91,4 +91,4 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 
 ## Product X Profile
 
-[PASTE X PROFILE LINK AFTER CREATING THE ACCOUNT]
+[@zkallowlist](https://x.com/zkallowlist)
