@@ -89,6 +89,10 @@ GitHub Actions runs on every push to `main` and on all pull requests. The pipeli
 
 See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrough.
 
+## Demo Video
+
+[Watch on YouTube](https://youtu.be/ndI0qxuQSKU)
+
 ## Product X Profile
 
 [@zkallowlist](https://x.com/zkallowlist)
