@@ -69,3 +69,14 @@ An outside observer looking at the blockchain can see the size of the allowlist 
 **"Access has already been claimed with this secret"** — Each secret can only claim access once. This is intentional — it stops the same membership from being used twice.
 
 **Proof generation seems stuck** — The first proof can take 30-90 seconds while Lace downloads its cryptographic key material. Subsequent proofs are much faster. Make sure the Docker proof server is still running.
+
+**"'prove' returned an error: TypeError: Failed to fetch" on the live demo** — This is expected on the hosted Vercel demo, not a bug. The proof server must run on *your own machine* (that's the whole point — your identity secret and proof generation never leave your computer, even when talking to a public website). Browsers block a public HTTPS page from reaching into `localhost` on your machine unless the local server explicitly opts in to Private Network Access, which the proof-server image does not do. To actually run a proof (Add Member / Claim Access), run the app locally instead:
+```bash
+git clone https://github.com/Spydiecy/zk-pvt-allowlist.git
+cd zk-pvt-allowlist
+npm install --legacy-peer-deps
+docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0
+npm run dev
+# open http://localhost:5173 — proofs work here because the page and the proof server are both local
+```
+The live Vercel demo is still useful for connecting a wallet and viewing the current on-chain state (allowlist size, claims) — just not for submitting new proofs.
