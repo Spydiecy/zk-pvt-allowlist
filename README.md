@@ -95,4 +95,4 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 
 ## Product X Profile
 
-[@zkallowlist](https://x.com/zkallowlist)
+[@zkallowlist](https://x.com/zkallowlist) — [launch post](https://x.com/zkallowlist/status/2090399870398206375?s=20)
