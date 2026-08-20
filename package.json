@@ -56,6 +56,10 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "//overrides": "onchain-runtime-v3 ships a WASM module whose StateValue class is instance-checked across package boundaries. compact-runtime allows ^3.0.0 (resolves to 3.1.0) while midnight-js-protocol pins exactly 3.0.0, so npm installs BOTH — two WASM instances, and any StateValue built by one is rejected by the other with 'expected instance of StateValue'. Pin to the version midnight-js-protocol requires so only one copy is ever loaded.",
+  "overrides": {
+    "@midnight-ntwrk/onchain-runtime-v3": "3.0.0"
+  },
   "keywords": [
     "midnight",
     "blockchain",
