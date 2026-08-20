@@ -131,9 +131,10 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
       return 'Transaction cancelled.';
     }
     if (msg.includes("'prove' returned an error") || msg.includes('Failed to fetch')) {
-      return "Couldn't reach the local proof server. This app needs to run locally (npm run dev) with " +
-        'the proof server running (docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0) — ' +
-        "browsers block a public site like this one from reaching your machine's localhost. See docs/USAGE.md.";
+      return "Couldn't reach your local proof server. Some browsers block a public site like this one " +
+        "from reaching your machine's localhost. Make sure the proof server is running " +
+        '(docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0), or run this app locally ' +
+        'with `npm run dev` for a more reliable connection. See docs/USAGE.md.';
     }
     return msg.length > 150 ? msg.slice(0, 150) + '…' : msg;
   }
