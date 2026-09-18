@@ -96,3 +96,10 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 ## Product X Profile
 
 [@zkallowlist](https://x.com/zkallowlist) — [launch post](https://x.com/zkallowlist/status/2090399870398206375?s=20)
+
+## Level 5 — User Validation
+
+- Target: 50 Preprod users
+- Current: 0 / 50 (in progress)
+- See [USERS.md](./USERS.md) for the list of verified Preprod wallet addresses
+- See [docs/FEEDBACK.md](./docs/FEEDBACK.md) for the feedback log and what changed as a result
