@@ -6,6 +6,12 @@ node_modules/
 .midnight-wallet-state/
 midnight-level-db/
 
+# Load-test artifacts — generated wallet seeds, run results, toolkit and docs, local only
+.load-test-wallets/
+.load-test-results/
+src/load-test/
+docs/LOAD_TEST.md
+
 # Build output
 dist/
 

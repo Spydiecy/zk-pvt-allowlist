@@ -266,6 +266,29 @@ a { color: inherit; }
   .how-cols { grid-template-columns: 1fr; gap: 22px; }
 }
 
+/* ── Use cases — icon chip + 4-column grid, mirrors "How it works" ──────── */
+.usecase-row {
+  padding-top: 8px;
+}
+.usecase-cols {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px;
+}
+.usecase-col { display: flex; flex-direction: column; gap: 9px; }
+.usecase-icon {
+  width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-10); color: var(--accent-text);
+  margin-bottom: 3px;
+}
+.usecase-col strong { font-size: 14.5px; font-weight: 650; }
+.usecase-col p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+@media (max-width: 900px) {
+  .usecase-cols { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+@media (max-width: 560px) {
+  .usecase-cols { grid-template-columns: 1fr; gap: 22px; }
+}
+
 /* ── Action panel — the core feature, two-column form layout ────────────── */
 .action-panel {
   background: var(--surface);

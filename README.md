@@ -102,4 +102,6 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 - Target: 50 Preprod users
 - Current: 0 / 50 (in progress)
 - See [USERS.md](./USERS.md) for the list of verified Preprod wallet addresses
+- **User feedback (Google Sheet, required format):** [Feedback responses](https://docs.google.com/spreadsheets/d/1H6BckdFSDrBmMohRy76c6czPAEFw4XN5K5lbel8LEXY/edit?usp=sharing)
+- Feedback form (collects into the sheet above): [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSefoSrtAf9jt--F2E0Nd2-IngXk0LkKLA0OHrGQYeNT6eR_JQ/viewform?usp=publish-editor)
 - See [docs/FEEDBACK.md](./docs/FEEDBACK.md) for the feedback log and what changed as a result

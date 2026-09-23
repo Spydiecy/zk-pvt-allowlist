@@ -47,7 +47,7 @@ export function WalletConnect() {
 
   return (
     <button className="btn btn-primary" onClick={connect}>
-      <WalletIcon size={14} /> Connect Lace
+      <WalletIcon size={14} /> Connect Wallet
     </button>
   );
 }

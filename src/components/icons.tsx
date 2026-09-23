@@ -148,3 +148,42 @@ export function ArrowRightIcon({ size = 15 }: IconProps) {
     </svg>
   );
 }
+
+export function MintIcon({ size = 16 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 3 20 8v8l-8 5-8-5V8l8-5Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M4 8l8 5 8-5M12 13v8" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function GovernanceIcon({ size = 16 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 3 4 7v2h16V7l-8-4Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <path d="M6 9v8M18 9v8M9 9v8M15 9v8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M3.5 20h17" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function KeyIcon({ size = 16 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="8" cy="8" r="4" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M11 11l9 9M16.5 15.5l2.5 2.5M14 18l2 2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function UsersIcon({ size = 16 }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <circle cx="9" cy="8.5" r="3" stroke="currentColor" strokeWidth="1.7" />
+      <path d="M3.5 19c0-3 2.5-5 5.5-5s5.5 2 5.5 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+      <circle cx="17" cy="8" r="2.2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M15.8 13.2c2.4.3 4.2 2.1 4.2 4.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}

@@ -7,7 +7,7 @@ import { Allowlist } from './components/Allowlist';
 import { Toaster } from './components/Toaster';
 import { ResultModal } from './components/ResultModal';
 import { MerkleDiagram } from './components/MerkleDiagram';
-import { LogoMark, ShieldIcon, TreeIcon, PulseIcon } from './components/icons';
+import { LogoMark, ShieldIcon, TreeIcon, PulseIcon, MintIcon, GovernanceIcon, KeyIcon, UsersIcon } from './components/icons';
 import './styles.css';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
@@ -16,7 +16,7 @@ const short = CONTRACT_ADDRESS
   ? `${CONTRACT_ADDRESS.slice(0, 8)}…${CONTRACT_ADDRESS.slice(-8)}`
   : null;
 const explorerUrl = CONTRACT_ADDRESS
-  ? `https://explorer.${NETWORK_ID}.midnight.network/contract/${CONTRACT_ADDRESS}`
+  ? `https://explorer.${NETWORK_ID}.midnight.network/contracts/stream/${CONTRACT_ADDRESS}`
   : null;
 
 function StatCell({ label, value, icon, tone }: { label: string; value: string; icon: React.ReactNode; tone?: 'green' | 'red' }) {
@@ -52,6 +52,7 @@ function AppInner() {
             </div>
             <nav className="nav-links">
               <a href="#how-it-works">How it works</a>
+              <a href="#use-cases">Use cases</a>
               <a href="https://github.com/Spydiecy/zk-pvt-allowlist" target="_blank" rel="noreferrer">GitHub</a>
             </nav>
             <WalletConnect />
@@ -129,6 +130,33 @@ function AppInner() {
                 <span className="how-num">03</span>
                 <strong>Access claimed on-chain</strong>
                 <p>A one-time nullifier stops reuse — without revealing identity.</p>
+              </div>
+            </div>
+          </section>
+
+          {/* Use cases — who this is for, below "how it works" */}
+          <section className="usecase-row reveal reveal-delay-2" id="use-cases">
+            <p className="section-label">Use cases</p>
+            <div className="usecase-cols">
+              <div className="usecase-col">
+                <span className="usecase-icon"><MintIcon size={17} /></span>
+                <strong>NFT allowlist mints</strong>
+                <p>Gate a mint to approved wallets without publishing the full allowlist for snipers to front-run.</p>
+              </div>
+              <div className="usecase-col">
+                <span className="usecase-icon"><GovernanceIcon size={17} /></span>
+                <strong>DAO governance</strong>
+                <p>Restrict proposals or votes to vetted members while keeping the roster off the public ledger.</p>
+              </div>
+              <div className="usecase-col">
+                <span className="usecase-icon"><KeyIcon size={17} /></span>
+                <strong>DeFi KYC'd access</strong>
+                <p>Prove a wallet cleared KYC/AML checks and unlock a pool or feature — without exposing who did.</p>
+              </div>
+              <div className="usecase-col">
+                <span className="usecase-icon"><UsersIcon size={17} /></span>
+                <strong>Token-gated communities</strong>
+                <p>Let members prove they belong to unlock content or perks, with no on-chain trace of the member list.</p>
               </div>
             </div>
           </section>

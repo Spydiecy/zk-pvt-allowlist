@@ -13,6 +13,8 @@
     "compile:counter": "compact compile contracts/counter.compact managed/counter",
     "deploy:preprod": "npx tsx src/deploy-allowlist.ts --network preprod",
     "deploy:preview": "npx tsx src/deploy-allowlist.ts --network preview",
+    "load-test": "npx tsx src/load-test/run.ts",
+    "load-test:dry-run": "npx tsx src/load-test/run.ts --dry-run",
     "test": "node --experimental-vm-modules node_modules/.bin/jest --testPathPattern=tests/",
     "test:run": "node --experimental-vm-modules node_modules/.bin/jest --testPathPattern=tests/ --forceExit"
   },
