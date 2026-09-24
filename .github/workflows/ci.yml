@@ -33,7 +33,15 @@ jobs:
       - name: Download Compact toolchain
         run: |
           export PATH="$HOME/.local/bin:$PATH"
-          compact update
+          # Pin to 0.31.1 — this is the toolchain version whose generated JS
+          # targets compact-runtime 0.16.0, matching the SDK version pinned
+          # in package.json (@midnight-ntwrk/midnight-js-protocol 4.1.1).
+          # `compact update` with no version installs the newest toolchain,
+          # which can drift ahead of the JS SDK and target a runtime version
+          # the SDK doesn't ship yet — causing a CompactError version
+          # mismatch at test/build time. Bump this in lockstep with the SDK
+          # dependency versions in package.json, not independently.
+          compact update 0.31.1
 
       - name: Verify Compact version
         run: |
