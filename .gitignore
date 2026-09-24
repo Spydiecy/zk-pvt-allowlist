@@ -6,7 +6,7 @@ node_modules/
 .midnight-wallet-state/
 midnight-level-db/
 
-# Load-test artifacts — generated wallet seeds, run results, toolkit and docs, local only
+# Internal tooling — local only
 .load-test-wallets/
 .load-test-results/
 src/load-test/
