@@ -25,8 +25,10 @@ export interface AllowlistState {
 export interface DeployedAllowlist {
   readonly address: string;
   readonly state$: Observable<AllowlistState>;
-  addMember: (secretHex: string) => Promise<void>;
-  claimAccess: (secretHex: string) => Promise<void>;
+  /** Resolves to the finalized transaction's id (`public.txId`) on success. */
+  addMember: (secretHex: string) => Promise<string | null>;
+  /** Resolves to the finalized transaction's id (`public.txId`) on success. */
+  claimAccess: (secretHex: string) => Promise<string | null>;
   hasClaimed: (secretHex: string) => Promise<boolean>;
   /** One-shot fetch of the current on-chain state, bypassing the live subscription. */
   refreshState: () => Promise<AllowlistState>;
@@ -137,18 +139,19 @@ export async function joinAllowlist(
     },
 
     /** Admin action: publish a new member's commitment hash on-chain. */
-    async addMember(secretHex: string): Promise<void> {
+    async addMember(secretHex: string): Promise<string | null> {
       const secret = hexToBytes32(secretHex);
       const commitment = commitmentFor(secret);
-      await withTimeout(
+      const result = await withTimeout(
         (found as any).callTx.add_member(commitment),
         CONFIRMATION_TIMEOUT_MS,
         'Add member confirmation',
       );
+      return (result as any)?.public?.txId ?? null;
     },
 
     /** User action: prove membership and claim access without revealing identity. */
-    async claimAccess(secretHex: string): Promise<void> {
+    async claimAccess(secretHex: string): Promise<string | null> {
       const secret = hexToBytes32(secretHex);
       const commitment = commitmentFor(secret);
 
@@ -159,11 +162,12 @@ export async function joinAllowlist(
         throw new Error('This identity is not on the allowlist.');
       }
 
-      await withTimeout(
+      const result = await withTimeout(
         (found as any).callTx.claim_access(secret, path),
         CONFIRMATION_TIMEOUT_MS,
         'Claim access confirmation',
       );
+      return (result as any)?.public?.txId ?? null;
     },
 
     /** Local-only check: has this secret's nullifier already been spent? */

@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useMidnight } from '../contexts/useMidnight.tsx';
+import { CopyIcon, CheckCircleIcon } from './icons';
 
 /**
  * ResultModal — a full-screen animated popup for the outcome of a circuit
@@ -37,11 +38,26 @@ const PARTICLES = Array.from({ length: 14 }, (_, i) => {
 });
 
 export function ResultModal() {
-  const { txStatus, txError, lastAction, resetTx } = useMidnight();
+  const { txStatus, txError, lastAction, lastTxId, resetTx } = useMidnight();
+  const [copied, setCopied] = useState(false);
 
   const open = (txStatus === 'confirmed' || txStatus === 'failed') && !!lastAction;
   const variant = txStatus === 'confirmed' ? 'success' : 'failed';
   const copy = lastAction ? COPY[lastAction] : null;
+
+  useEffect(() => { if (!open) setCopied(false); }, [open]);
+
+  async function copyTxId() {
+    if (!lastTxId) return;
+    try {
+      await navigator.clipboard.writeText(lastTxId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2200);
+    } catch {
+      // Clipboard API can be unavailable (older browsers, insecure context) —
+      // fail silently rather than showing a broken "copied" state.
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -129,7 +145,18 @@ export function ResultModal() {
           {variant === 'success' ? copy.success.body : (txError ?? 'Something went wrong.')}
         </p>
 
-        <button className="btn btn-primary btn-full" style={{ marginTop: 20 }} onClick={resetTx}>
+        {variant === 'success' && lastTxId && (
+          <button
+            type="button"
+            className="result-modal-copy-tx"
+            onClick={copyTxId}
+          >
+            {copied ? <CheckCircleIcon size={14} /> : <CopyIcon size={14} />}
+            {copied ? 'Copied' : 'Copy transaction ID'}
+          </button>
+        )}
+
+        <button className="btn btn-primary btn-full" style={{ marginTop: 12 }} onClick={resetTx}>
           {variant === 'success' ? 'Nice' : 'Got it'}
         </button>
       </div>

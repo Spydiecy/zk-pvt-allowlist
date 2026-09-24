@@ -30,6 +30,8 @@ export interface MidnightContextValue {
   txStatus: TxStatus;
   txError: string | null;
   lastAction: LastAction;
+  /** Transaction id of the most recently confirmed add_member/claim_access call. */
+  lastTxId: string | null;
   addMember: (secretHex: string) => Promise<void>;
   claimAccess: (secretHex: string) => Promise<void>;
   resetTx: () => void;
@@ -46,6 +48,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
   const [txStatus, setTxStatus] = useState<TxStatus>('idle');
   const [txError, setTxError] = useState<string | null>(null);
   const [lastAction, setLastAction] = useState<LastAction>(null);
+  const [lastTxId, setLastTxId] = useState<string | null>(null);
 
   const toast = useToast();
   const connectedAPIRef = useRef<ConnectedAPI | null>(null);
@@ -148,8 +151,10 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     setTxStatus('proving');
     setTxError(null);
     setLastAction('add_member');
+    setLastTxId(null);
     try {
-      await deployedRef.current.addMember(secretHex);
+      const txId = await deployedRef.current.addMember(secretHex);
+      setLastTxId(txId);
       setTxStatus('confirmed');
       // Force-refresh immediately — don't rely solely on the live subscription.
       deployedRef.current.refreshState().then(setContractState).catch(() => {});
@@ -168,8 +173,10 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     setTxStatus('proving');
     setTxError(null);
     setLastAction('claim_access');
+    setLastTxId(null);
     try {
-      await deployedRef.current.claimAccess(secretHex);
+      const txId = await deployedRef.current.claimAccess(secretHex);
+      setLastTxId(txId);
       setTxStatus('confirmed');
       deployedRef.current.refreshState().then(setContractState).catch(() => {});
     } catch (err: any) {
@@ -182,12 +189,13 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     setTxStatus('idle');
     setTxError(null);
     setLastAction(null);
+    setLastTxId(null);
   }, []);
 
   return (
     <MidnightContext.Provider value={{
       walletStatus, walletAddress, walletError, connect, disconnect,
-      contractState, contractError, txStatus, txError, lastAction,
+      contractState, contractError, txStatus, txError, lastAction, lastTxId,
       addMember, claimAccess, resetTx,
     }}>
       {children}

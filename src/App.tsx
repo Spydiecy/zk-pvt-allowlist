@@ -93,6 +93,30 @@ function AppInner() {
             </div>
           </section>
 
+          {/* Beginner's 3-step guide — plain-language walkthrough before the
+              technical "How it works" section further down. Requested by a
+              user testing the app for the first time (docs/FEEDBACK.md #48). */}
+          <section className="guide-row reveal reveal-delay-1" id="get-started">
+            <p className="section-label">Get started in 3 steps</p>
+            <div className="guide-cols">
+              <div className="guide-col">
+                <span className="guide-num">1</span>
+                <strong>Connect your wallet</strong>
+                <p>Click "Connect Wallet" above and approve the connection in Lace.</p>
+              </div>
+              <div className="guide-col">
+                <span className="guide-num">2</span>
+                <strong>Get a secret</strong>
+                <p>An admin adds your secret to the allowlist, or you generate one below.</p>
+              </div>
+              <div className="guide-col">
+                <span className="guide-num">3</span>
+                <strong>Claim access</strong>
+                <p>Enter your secret and claim — no one else can see which entry is yours.</p>
+              </div>
+            </div>
+          </section>
+
           {/* Live stat strip */}
           <section className="stat-strip reveal reveal-delay-1">
             <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} icon={<TreeIcon size={14} />} />
