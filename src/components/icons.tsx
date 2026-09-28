@@ -40,7 +40,7 @@ export function BoltIcon({ size = 16 }: IconProps) {
       <path
         d="M12.5 2 4 14h6.2l-1.2 8L20 10h-6.2l-1.3-8Z"
         stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" strokeLinecap="round"
-        fill="rgba(124,92,252,0.14)"
+        fill="rgba(216,163,77,0.16)"
       />
     </svg>
   );

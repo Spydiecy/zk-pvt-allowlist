@@ -7,7 +7,7 @@ import { Allowlist } from './components/Allowlist';
 import { Toaster } from './components/Toaster';
 import { ResultModal } from './components/ResultModal';
 import { MerkleDiagram } from './components/MerkleDiagram';
-import { LogoMark, ShieldIcon, TreeIcon, PulseIcon, MintIcon, GovernanceIcon, KeyIcon, UsersIcon } from './components/icons';
+import { LogoMark, ShieldIcon, TreeIcon, PulseIcon } from './components/icons';
 import './styles.css';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
@@ -62,7 +62,11 @@ function AppInner() {
         {/* Main content */}
         <main className="main">
 
-          {/* Hero — copy on the left, Merkle proof diagram on the right */}
+          {/* Hero — copy + inline getting-started checklist on the left,
+              Merkle proof diagram on the right. The 3-step beginner's guide
+              (docs/FEEDBACK.md #48) lives as a compact checklist here rather
+              than as its own card-grid section — one less repeated layout
+              on the page, same content. */}
           <section className="hero-split reveal">
             <div className="hero-copy">
               <p className="kicker">Preprod · Zero-Knowledge Membership</p>
@@ -87,33 +91,14 @@ function AppInner() {
                   Contract <code>{short}</code>
                 </a>
               )}
+              <ol className="get-started" id="get-started" aria-label="Get started in 3 steps">
+                <li><span>Connect your wallet</span> — click "Connect Wallet" and approve in Lace</li>
+                <li><span>Get a secret</span> — an admin adds it, or generate one below</li>
+                <li><span>Claim access</span> — no one else can see which entry is yours</li>
+              </ol>
             </div>
             <div className="hero-diagram">
               <MerkleDiagram compact />
-            </div>
-          </section>
-
-          {/* Beginner's 3-step guide — plain-language walkthrough before the
-              technical "How it works" section further down. Requested by a
-              user testing the app for the first time (docs/FEEDBACK.md #48). */}
-          <section className="guide-row reveal reveal-delay-1" id="get-started">
-            <p className="section-label">Get started in 3 steps</p>
-            <div className="guide-cols">
-              <div className="guide-col">
-                <span className="guide-num">1</span>
-                <strong>Connect your wallet</strong>
-                <p>Click "Connect Wallet" above and approve the connection in Lace.</p>
-              </div>
-              <div className="guide-col">
-                <span className="guide-num">2</span>
-                <strong>Get a secret</strong>
-                <p>An admin adds your secret to the allowlist, or you generate one below.</p>
-              </div>
-              <div className="guide-col">
-                <span className="guide-num">3</span>
-                <strong>Claim access</strong>
-                <p>Enter your secret and claim — no one else can see which entry is yours.</p>
-              </div>
             </div>
           </section>
 
@@ -141,46 +126,54 @@ function AppInner() {
             <p className="section-label">How it works</p>
             <div className="how-cols">
               <div className="how-col">
-                <span className="how-num">01</span>
+                <span className="how-num">1</span>
                 <strong>Admin adds a member</strong>
                 <p>Only a commitment hash goes on-chain — never the secret.</p>
               </div>
               <div className="how-col">
-                <span className="how-num">02</span>
+                <span className="how-num">2</span>
                 <strong>Member proves membership</strong>
                 <p>A Merkle path and secret prove inclusion — both stay private.</p>
               </div>
               <div className="how-col">
-                <span className="how-num">03</span>
+                <span className="how-num">3</span>
                 <strong>Access claimed on-chain</strong>
                 <p>A one-time nullifier stops reuse — without revealing identity.</p>
               </div>
             </div>
           </section>
 
-          {/* Use cases — who this is for, below "how it works" */}
+          {/* Use cases — an editorial index list, not another icon-card grid */}
           <section className="usecase-row reveal reveal-delay-2" id="use-cases">
             <p className="section-label">Use cases</p>
             <div className="usecase-cols">
               <div className="usecase-col">
-                <span className="usecase-icon"><MintIcon size={17} /></span>
-                <strong>NFT allowlist mints</strong>
-                <p>Gate a mint to approved wallets without publishing the full allowlist for snipers to front-run.</p>
+                <span className="usecase-ghost-num" aria-hidden="true">01</span>
+                <div className="usecase-col-body">
+                  <strong>NFT allowlist mints</strong>
+                  <p>Gate a mint to approved wallets without publishing the full allowlist for snipers to front-run.</p>
+                </div>
               </div>
               <div className="usecase-col">
-                <span className="usecase-icon"><GovernanceIcon size={17} /></span>
-                <strong>DAO governance</strong>
-                <p>Restrict proposals or votes to vetted members while keeping the roster off the public ledger.</p>
+                <span className="usecase-ghost-num" aria-hidden="true">02</span>
+                <div className="usecase-col-body">
+                  <strong>DAO governance</strong>
+                  <p>Restrict proposals or votes to vetted members while keeping the roster off the public ledger.</p>
+                </div>
               </div>
               <div className="usecase-col">
-                <span className="usecase-icon"><KeyIcon size={17} /></span>
-                <strong>DeFi KYC'd access</strong>
-                <p>Prove a wallet cleared KYC/AML checks and unlock a pool or feature — without exposing who did.</p>
+                <span className="usecase-ghost-num" aria-hidden="true">03</span>
+                <div className="usecase-col-body">
+                  <strong>DeFi KYC'd access</strong>
+                  <p>Prove a wallet cleared KYC/AML checks and unlock a pool or feature — without exposing who did.</p>
+                </div>
               </div>
               <div className="usecase-col">
-                <span className="usecase-icon"><UsersIcon size={17} /></span>
-                <strong>Token-gated communities</strong>
-                <p>Let members prove they belong to unlock content or perks, with no on-chain trace of the member list.</p>
+                <span className="usecase-ghost-num" aria-hidden="true">04</span>
+                <div className="usecase-col-body">
+                  <strong>Token-gated communities</strong>
+                  <p>Let members prove they belong to unlock content or perks, with no on-chain trace of the member list.</p>
+                </div>
               </div>
             </div>
           </section>
