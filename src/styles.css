@@ -112,37 +112,62 @@ a { color: inherit; }
 }
 
 /* ── Header ──────────────────────────────────────────────────────────────── */
+/* Fixed height, no wrapping, three flex zones (logo / nav / wallet) that
+   never fight for the same line. The old version let the logo's two-line
+   text block collide with the nav on real-world widths — this version
+   gives each zone a hard min-width=0 + shrink budget so nothing overlaps. */
 .header {
-  height: 68px;
+  height: 64px;
   border-bottom: 1px solid var(--border);
   display: flex; align-items: center;
-  padding: 0 28px;
+  padding: 0 20px;
   position: sticky; top: 0; z-index: 50;
-  background: rgba(8,9,12,0.7);
+  background: rgba(8,9,12,0.85);
   backdrop-filter: blur(20px) saturate(1.5);
 }
 .header-inner {
   width: 100%; max-width: 1180px; margin: 0 auto;
-  display: flex; align-items: center; gap: 32px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
 }
-.logo { display: flex; align-items: center; gap: 11px; flex-shrink: 0; }
+.logo {
+  display: flex; align-items: center; gap: 9px;
+  flex-shrink: 0; min-width: 0;
+}
+.logo-btn {
+  border: none; background: transparent; padding: 0; cursor: pointer;
+  text-align: left; font-family: inherit;
+}
 .logo-mark {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
   background: var(--bg);
   border: 1.5px solid var(--accent);
   display: flex; align-items: center; justify-content: center;
   color: var(--accent-text);
 }
-.logo-text h1 { font-size: 14.5px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.3; }
-.logo-text p  { font-size: 11px; color: var(--faint); font-weight: 500; }
+.logo-text { display: flex; flex-direction: column; min-width: 0; }
+.logo-text h1 {
+  font-size: 14px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.2;
+  white-space: nowrap;
+}
+.logo-text p  { display: none; }
 
-.nav-links { display: flex; align-items: center; gap: 24px; margin-right: auto; }
+.nav-links {
+  display: flex; align-items: center; gap: 22px;
+  flex-shrink: 1; min-width: 0; overflow: hidden;
+}
 .nav-links a {
   font-size: 13px; font-weight: 500; color: var(--muted);
-  text-decoration: none; transition: color 0.2s;
+  text-decoration: none; transition: color 0.2s; white-space: nowrap;
 }
 .nav-links a:hover { color: var(--text); }
-@media (max-width: 760px) { .nav-links { display: none; } }
+.nav-back {
+  border: none; background: transparent; cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 500; color: var(--muted);
+  transition: color 0.2s; padding: 0; white-space: nowrap;
+}
+.nav-back:hover { color: var(--text); }
+@media (max-width: 780px) { .nav-links a { display: none; } }
+@media (max-width: 480px) { .logo-text h1 { font-size: 13px; } }
 
 /* ── Main / layout ───────────────────────────────────────────────────────── */
 .main {
@@ -204,6 +229,11 @@ a { color: inherit; }
   margin-bottom: 26px;
 }
 
+.hero-actions {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 26px;
+}
+
 .meta-item {
   display: inline-flex; align-items: center; gap: 7px;
   font-size: 12.5px; font-weight: 500; color: var(--muted);
@@ -220,33 +250,6 @@ a { color: inherit; }
 
 @media (max-width: 640px) {
   .hero-title { font-size: 40px; }
-}
-
-/* ── Get-started checklist — inline in the hero, not a fourth card grid ──── */
-.get-started {
-  list-style: none;
-  display: flex; flex-direction: column; gap: 10px;
-  margin-top: 24px; padding-top: 20px;
-  border-top: 1px dashed var(--border);
-  counter-reset: step;
-  max-width: 440px;
-}
-.get-started li {
-  counter-increment: step;
-  display: flex; align-items: baseline; gap: 10px;
-  font-size: 13px; color: var(--muted); line-height: 1.5;
-}
-.get-started li::before {
-  content: counter(step);
-  flex-shrink: 0;
-  width: 18px; height: 18px; border-radius: 50%;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-size: 10px; font-weight: 700; font-variant-numeric: tabular-nums;
-  color: var(--accent-text); border: 1px solid var(--accent-24);
-  transform: translateY(1px);
-}
-.get-started li span {
-  color: var(--text-dim); font-weight: 600;
 }
 
 /* ── Live stat strip ─────────────────────────────────────────────────────── */
@@ -322,32 +325,30 @@ a { color: inherit; }
   .how-num { position: absolute; left: 0; top: 0; margin-bottom: 0; }
 }
 
-/* ── Use cases — stacked editorial rows with ghost numerals ──────────────── */
-/* Deliberately not another icon-square grid — a row list with a large,
-   low-opacity outline numeral reads as an index/table-of-contents rather
-   than a repeated feature-card component. */
-.usecase-row { padding-top: 8px; }
-.usecase-cols {
-  display: flex; flex-direction: column;
+/* ── Before you start — plain checklist, not decorative ──────────────────── */
+.requirements-row { padding-top: 4px; padding-bottom: 8px; }
+.requirements-list {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 14px;
+  max-width: 640px;
 }
-.usecase-col {
-  display: grid; grid-template-columns: 56px 1fr; align-items: baseline;
-  gap: 20px; padding: 18px 0;
-  border-top: 1px solid var(--border);
+.requirements-list li {
+  position: relative; padding-left: 22px;
+  font-size: 13.5px; color: var(--muted); line-height: 1.6;
 }
-.usecase-col:first-child { border-top: 1px solid var(--border); }
-.usecase-ghost-num {
-  font-family: 'Fraunces', serif;
-  font-size: 34px; font-weight: 500; line-height: 1;
-  color: transparent; -webkit-text-stroke: 1.3px var(--accent-24);
+.requirements-list li::before {
+  content: '—';
+  position: absolute; left: 0; top: 0;
+  color: var(--accent-24); font-weight: 700;
 }
-.usecase-col-body { display: flex; flex-direction: column; gap: 5px; }
-.usecase-col strong { font-size: 14.5px; font-weight: 650; }
-.usecase-col p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 56ch; }
-@media (max-width: 560px) {
-  .usecase-col { grid-template-columns: 40px 1fr; gap: 14px; }
-  .usecase-ghost-num { font-size: 26px; }
+.requirements-list strong { color: var(--text-dim); font-weight: 650; }
+.requirements-list code {
+  font-size: 12px; color: var(--accent-text);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 5px; padding: 2px 6px;
 }
+.requirements-list a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--accent-24); }
+.requirements-list a:hover { text-decoration-color: var(--accent-text); }
 
 /* ── Action panel — the core feature, two-column form layout ────────────── */
 .action-panel {
@@ -482,6 +483,7 @@ a { color: inherit; }
 
 .btn-full { width: 100%; padding: 14px 22px; font-size: 14.5px; }
 .btn-sm   { padding: 7px 13px; font-size: 12px; }
+.btn-lg   { padding: 15px 26px; font-size: 15px; }
 
 /* ── Wallet connect ──────────────────────────────────────────────────────── */
 .wallet-area { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }

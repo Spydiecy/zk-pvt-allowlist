@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MidnightProvider } from './contexts/MidnightContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { useMidnight } from './contexts/useMidnight.tsx';
@@ -7,7 +7,7 @@ import { Allowlist } from './components/Allowlist';
 import { Toaster } from './components/Toaster';
 import { ResultModal } from './components/ResultModal';
 import { MerkleDiagram } from './components/MerkleDiagram';
-import { LogoMark, ShieldIcon, TreeIcon, PulseIcon } from './components/icons';
+import { LogoMark, ShieldIcon, TreeIcon, PulseIcon, ArrowRightIcon } from './components/icons';
 import './styles.css';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
@@ -32,7 +32,10 @@ function StatCell({ label, value, icon, tone }: { label: string; value: string; 
 }
 
 function AppInner() {
-  const { contractState } = useMidnight();
+  const { contractState, walletStatus } = useMidnight();
+  const [view, setView] = useState<'landing' | 'app'>('landing');
+  const isConnected = walletStatus === 'connected';
+
   return (
     <>
       <Toaster />
@@ -43,142 +46,39 @@ function AppInner() {
         {/* Header */}
         <header className="header">
           <div className="header-inner">
-            <div className="logo">
+            <button className="logo logo-btn" onClick={() => setView('landing')} aria-label="Private Allowlist home">
               <div className="logo-mark"><LogoMark size={16} /></div>
               <div className="logo-text">
                 <h1>Private Allowlist</h1>
-                <p>Midnight Network</p>
               </div>
-            </div>
-            <nav className="nav-links">
-              <a href="#how-it-works">How it works</a>
-              <a href="#use-cases">Use cases</a>
-              <a href="https://github.com/Spydiecy/zk-pvt-allowlist" target="_blank" rel="noreferrer">GitHub</a>
-            </nav>
+            </button>
+
+            {view === 'landing' ? (
+              <nav className="nav-links">
+                <a href="#how-it-works">How it works</a>
+                <a href="https://github.com/Spydiecy/zk-pvt-allowlist" target="_blank" rel="noreferrer">GitHub</a>
+                {/* The Start button is redundant once a wallet is connected —
+                    the wallet pill on the right already signals "you're in".
+                    Only show it for a disconnected first-time visitor. */}
+                {!isConnected && (
+                  <button className="btn btn-primary btn-sm" onClick={() => setView('app')}>Start</button>
+                )}
+              </nav>
+            ) : (
+              <nav className="nav-links">
+                <button className="nav-back" onClick={() => setView('landing')}>← Overview</button>
+              </nav>
+            )}
+
             <WalletConnect />
           </div>
         </header>
 
-        {/* Main content */}
-        <main className="main">
-
-          {/* Hero — copy + inline getting-started checklist on the left,
-              Merkle proof diagram on the right. The 3-step beginner's guide
-              (docs/FEEDBACK.md #48) lives as a compact checklist here rather
-              than as its own card-grid section — one less repeated layout
-              on the page, same content. */}
-          <section className="hero-split reveal">
-            <div className="hero-copy">
-              <p className="kicker">Preprod · Zero-Knowledge Membership</p>
-              <h2 className="hero-title">
-                Prove you belong.
-                <br />
-                <span className="hero-title-em">Not who you are.</span>
-              </h2>
-              <p className="hero-desc">
-                A zero-knowledge Merkle proof lets a member show they belong to a
-                private allowlist. The chain learns that someone claimed access —
-                never which member, and never their secret.
-              </p>
-              {short && (
-                <a
-                  className="meta-item meta-item-link"
-                  href={explorerUrl ?? undefined}
-                  target={explorerUrl ? '_blank' : undefined}
-                  rel="noreferrer"
-                >
-                  <ShieldIcon size={13} />
-                  Contract <code>{short}</code>
-                </a>
-              )}
-              <ol className="get-started" id="get-started" aria-label="Get started in 3 steps">
-                <li><span>Connect your wallet</span> — click "Connect Wallet" and approve in Lace</li>
-                <li><span>Get a secret</span> — an admin adds it, or generate one below</li>
-                <li><span>Claim access</span> — no one else can see which entry is yours</li>
-              </ol>
-            </div>
-            <div className="hero-diagram">
-              <MerkleDiagram compact />
-            </div>
-          </section>
-
-          {/* Live stat strip */}
-          <section className="stat-strip reveal reveal-delay-1">
-            <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} icon={<TreeIcon size={14} />} />
-            <span className="stat-div" />
-            <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '—'} icon={<PulseIcon size={14} />} />
-            <span className="stat-div" />
-            <StatCell
-              label="Tree capacity"
-              value={contractState === null ? '—' : contractState.isFull ? 'Full' : 'Open'}
-              tone={contractState?.isFull ? 'red' : 'green'}
-              icon={<ShieldIcon size={14} />}
-            />
-          </section>
-
-          {/* Core feature — single centered column, not a split grid */}
-          <div className="reveal reveal-delay-2">
-            <Allowlist />
-          </div>
-
-          {/* How it works — horizontal, minimal, below the fold */}
-          <section className="how-row reveal reveal-delay-2" id="how-it-works">
-            <p className="section-label">How it works</p>
-            <div className="how-cols">
-              <div className="how-col">
-                <span className="how-num">1</span>
-                <strong>Admin adds a member</strong>
-                <p>Only a commitment hash goes on-chain — never the secret.</p>
-              </div>
-              <div className="how-col">
-                <span className="how-num">2</span>
-                <strong>Member proves membership</strong>
-                <p>A Merkle path and secret prove inclusion — both stay private.</p>
-              </div>
-              <div className="how-col">
-                <span className="how-num">3</span>
-                <strong>Access claimed on-chain</strong>
-                <p>A one-time nullifier stops reuse — without revealing identity.</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Use cases — an editorial index list, not another icon-card grid */}
-          <section className="usecase-row reveal reveal-delay-2" id="use-cases">
-            <p className="section-label">Use cases</p>
-            <div className="usecase-cols">
-              <div className="usecase-col">
-                <span className="usecase-ghost-num" aria-hidden="true">01</span>
-                <div className="usecase-col-body">
-                  <strong>NFT allowlist mints</strong>
-                  <p>Gate a mint to approved wallets without publishing the full allowlist for snipers to front-run.</p>
-                </div>
-              </div>
-              <div className="usecase-col">
-                <span className="usecase-ghost-num" aria-hidden="true">02</span>
-                <div className="usecase-col-body">
-                  <strong>DAO governance</strong>
-                  <p>Restrict proposals or votes to vetted members while keeping the roster off the public ledger.</p>
-                </div>
-              </div>
-              <div className="usecase-col">
-                <span className="usecase-ghost-num" aria-hidden="true">03</span>
-                <div className="usecase-col-body">
-                  <strong>DeFi KYC'd access</strong>
-                  <p>Prove a wallet cleared KYC/AML checks and unlock a pool or feature — without exposing who did.</p>
-                </div>
-              </div>
-              <div className="usecase-col">
-                <span className="usecase-ghost-num" aria-hidden="true">04</span>
-                <div className="usecase-col-body">
-                  <strong>Token-gated communities</strong>
-                  <p>Let members prove they belong to unlock content or perks, with no on-chain trace of the member list.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-        </main>
+        {view === 'landing' ? (
+          <LandingView onStart={() => setView('app')} />
+        ) : (
+          <AppView contractState={contractState} />
+        )}
 
         <footer className="footer">
           <div className="footer-inner">
@@ -197,6 +97,120 @@ function AppInner() {
         </footer>
       </div>
     </>
+  );
+}
+
+/**
+ * LandingView — the marketing page a first-time visitor actually sees.
+ * Deliberately short: a headline, one real explanation of the mechanism,
+ * a diagram, and how the two circuits work. No filler "use cases" grid,
+ * no repeated CTA band — a developer evaluating a ZK tool wants to know
+ * what it does and see it work, not scroll past a features carousel.
+ */
+function LandingView({ onStart }: { onStart: () => void }) {
+  return (
+    <main className="main">
+
+      <section className="hero-split reveal">
+        <div className="hero-copy">
+          <p className="kicker">Preprod · Zero-Knowledge Membership</p>
+          <h2 className="hero-title">
+            Prove you belong.
+            <br />
+            <span className="hero-title-em">Not who you are.</span>
+          </h2>
+          <p className="hero-desc">
+            An admin publishes members as commitment hashes in an on-chain
+            Merkle tree. A member proves inclusion with a zero-knowledge
+            circuit — the chain checks a proof instead of reading a list.
+            No wallet address is ever tied to a specific entry.
+          </p>
+          <div className="hero-actions">
+            <button className="btn btn-primary btn-lg" onClick={onStart}>
+              Open the app <ArrowRightIcon size={16} />
+            </button>
+            {short && (
+              <a
+                className="meta-item meta-item-link"
+                href={explorerUrl ?? undefined}
+                target={explorerUrl ? '_blank' : undefined}
+                rel="noreferrer"
+              >
+                <ShieldIcon size={13} />
+                Contract <code>{short}</code>
+              </a>
+            )}
+          </div>
+        </div>
+        <div className="hero-diagram">
+          <MerkleDiagram compact />
+        </div>
+      </section>
+
+      <section className="how-row reveal reveal-delay-1" id="how-it-works">
+        <p className="section-label">How it works</p>
+        <div className="how-cols">
+          <div className="how-col">
+            <span className="how-num">1</span>
+            <strong>Admin adds a member</strong>
+            <p>Only a commitment hash goes on-chain — never the secret.</p>
+          </div>
+          <div className="how-col">
+            <span className="how-num">2</span>
+            <strong>Member proves membership</strong>
+            <p>A Merkle path and secret prove inclusion — both stay private.</p>
+          </div>
+          <div className="how-col">
+            <span className="how-num">3</span>
+            <strong>Access claimed on-chain</strong>
+            <p>A one-time nullifier stops reuse — without revealing identity.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="requirements-row reveal reveal-delay-2">
+        <p className="section-label">Before you start</p>
+        <ul className="requirements-list">
+          <li>
+            <strong>Lace wallet</strong>, set to Preprod, with the Proof Server pointed at <code>localhost:6300</code>
+          </li>
+          <li>
+            The local proof server running in Docker (<code>docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0</code>) — proofs are generated on your machine, never sent anywhere
+          </li>
+          <li>
+            A small tNIGHT/tDUST balance to cover fees — see the <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a> for the faucet link
+          </li>
+        </ul>
+      </section>
+
+    </main>
+  );
+}
+
+/**
+ * AppView — the actual product. Live on-chain stats, then the two real
+ * actions (claim access / add member) rendered by <Allowlist />.
+ */
+function AppView({ contractState }: { contractState: ReturnType<typeof useMidnight>['contractState'] }) {
+  return (
+    <main className="main">
+      <section className="stat-strip reveal">
+        <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} icon={<TreeIcon size={14} />} />
+        <span className="stat-div" />
+        <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '—'} icon={<PulseIcon size={14} />} />
+        <span className="stat-div" />
+        <StatCell
+          label="Tree capacity"
+          value={contractState === null ? '—' : contractState.isFull ? 'Full' : 'Open'}
+          tone={contractState?.isFull ? 'red' : 'green'}
+          icon={<ShieldIcon size={14} />}
+        />
+      </section>
+
+      <div className="reveal reveal-delay-1">
+        <Allowlist />
+      </div>
+    </main>
   );
 }
 
