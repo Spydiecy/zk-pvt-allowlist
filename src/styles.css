@@ -188,8 +188,19 @@ a { color: inherit; }
   margin-bottom: 32px;
 }
 
-/* ── Hero — single column, lowercase literal headline, real breathing room */
-.hero { max-width: 760px; }
+/* ── Hero — stacked headline left, diagram right, stat row along the base */
+.hero-top {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 56px;
+  align-items: center;
+  margin-bottom: 48px;
+}
+.hero-copy { min-width: 0; }
+@media (max-width: 900px) {
+  .hero-top { grid-template-columns: 1fr; gap: 36px; }
+  .hero-diagram { max-width: 100%; }
+}
 
 .kicker {
   font-size: 11px; font-weight: 700; color: var(--faint);
@@ -199,21 +210,41 @@ a { color: inherit; }
 
 .hero-title {
   font-family: 'Fraunces', 'Inter', serif;
-  font-size: 46px; font-weight: 500;
-  letter-spacing: -0.01em; line-height: 1.15;
+  font-size: 52px; font-weight: 500;
+  letter-spacing: -0.01em; line-height: 1.08;
   margin-bottom: 26px;
   color: var(--text);
   text-transform: lowercase;
 }
 
 .hero-desc {
-  font-size: 16px; color: var(--text-dim);
-  max-width: 620px; line-height: 1.75;
+  font-size: 15.5px; color: var(--text-dim);
+  max-width: 480px; line-height: 1.75;
   margin-bottom: 32px;
 }
 
 .hero-actions {
   display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+}
+
+/* Bottom stat row, echoing the "0 / 100% / live" strip along a hero's base
+   edge — real values pulled from the contract's own constraints, not
+   placeholder numbers. */
+.hero-stats {
+  display: flex; gap: 40px; flex-wrap: wrap;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.hero-stat { display: flex; flex-direction: column; gap: 4px; }
+.hero-stat strong {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 500; letter-spacing: -0.01em;
+  color: var(--text); text-transform: lowercase;
+  font-variant-numeric: tabular-nums;
+}
+.hero-stat span { font-size: 12px; color: var(--faint); }
+@media (max-width: 640px) {
+  .hero-stats { gap: 28px; }
 }
 
 .meta-item {
@@ -270,12 +301,7 @@ a { color: inherit; }
   .circuit-grid { grid-template-columns: 1fr; }
 }
 
-/* ── The proof, visually — copy above, diagram below, full width ────────── */
-.proof-row { padding-top: 4px; }
-.proof-copy { max-width: 640px; margin-bottom: 32px; }
-.proof-copy .section-label { margin-bottom: 14px; }
-.proof-desc { font-size: 15px; color: var(--text-dim); line-height: 1.75; }
-.hero-diagram { min-width: 0; max-width: 720px; }
+.hero-diagram { min-width: 0; }
 
 /* ── Live stat strip ─────────────────────────────────────────────────────── */
 .stat-strip {
@@ -308,43 +334,59 @@ a { color: inherit; }
   .stat-cell { padding: 12px 14px; }
 }
 
-/* ── Before you start — three real setup steps, own cards ────────────────── */
+/* ── Before you start — a terminal-styled setup panel ─────────────────────── */
+/* The previous version was three cramped cards with a docker command that
+   word-broke mid-token ("midnightn / twrk"). This reads as a small
+   terminal session instead: one dark panel, numbered lines, the actual
+   command on its own row with normal wrapping so it never splits a word. */
 .requirements-row { padding-top: 4px; }
-.requirements-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
-}
-.requirement {
-  display: flex; gap: 16px;
+.requirements-panel {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 24px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
 }
+.requirements-panel-head {
+  display: flex; align-items: center; gap: 8px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.requirements-panel-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--border-h); }
+.requirements-panel-title {
+  font-size: 12px; color: var(--faint); font-family: 'SF Mono', monospace;
+  margin-left: 4px;
+}
+.requirement-step {
+  display: grid; grid-template-columns: 28px 1fr;
+  gap: 16px; padding: 22px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.requirement-step:last-child { border-bottom: none; }
 .requirement-num {
-  flex-shrink: 0;
-  width: 24px; height: 24px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
-  color: var(--accent-text); border: 1px solid var(--accent-24);
+  font-size: 13px; font-weight: 700; color: var(--accent-text);
+  font-variant-numeric: tabular-nums; font-family: 'SF Mono', monospace;
+  padding-top: 2px;
 }
-.requirement strong { display: block; font-size: 13.5px; font-weight: 650; margin-bottom: 6px; }
-.requirement p { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+.requirement-step strong { display: block; font-size: 14px; font-weight: 650; margin-bottom: 6px; }
+.requirement-step p { font-size: 13px; color: var(--muted); line-height: 1.65; }
 .requirement-cmd {
-  display: block; margin-top: 10px;
-  font-size: 11px; color: var(--accent-text);
+  display: block; margin-top: 12px;
+  font-size: 12.5px; color: var(--accent-text);
   background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--r-sm); padding: 8px 10px;
-  white-space: pre-wrap; word-break: break-all; line-height: 1.5;
+  border-radius: var(--r-sm); padding: 12px 14px;
+  overflow-x: auto; white-space: pre; line-height: 1.5;
 }
-.requirement code {
-  font-size: 12px; color: var(--accent-text);
+.requirement-step code:not(.requirement-cmd) {
+  font-size: 12.5px; color: var(--accent-text);
   background: var(--bg); border: 1px solid var(--border);
   border-radius: 5px; padding: 1px 6px;
 }
-.requirement a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--accent-24); }
-.requirement a:hover { text-decoration-color: var(--accent-text); }
-@media (max-width: 860px) {
-  .requirements-grid { grid-template-columns: 1fr; }
+.requirement-step a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--accent-24); }
+.requirement-step a:hover { text-decoration-color: var(--accent-text); }
+@media (max-width: 640px) {
+  .requirement-step { grid-template-columns: 1fr; gap: 8px; padding: 20px; }
+  .requirement-num { display: none; }
 }
 
 /* ── Action panel — the core feature, two-column form layout ────────────── */

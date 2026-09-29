@@ -113,30 +113,57 @@ function LandingView({ onStart }: { onStart: () => void }) {
     <main className="main">
 
       <section className="hero reveal">
-        <p className="kicker">the contract</p>
-        <h2 className="hero-title">one Merkle tree, membership nobody can read</h2>
-        <p className="hero-desc">
-          An admin inserts a member's commitment hash into a fixed-depth
-          tree on-chain. A member later proves their commitment is a leaf
-          of that tree — inside a zero-knowledge circuit — without
-          revealing the secret, the leaf's position, or their wallet.
-          The chain verifies a proof, not a lookup.
-        </p>
-        <div className="hero-actions">
-          <button className="btn btn-primary btn-lg" onClick={onStart}>
-            Open the app <ArrowRightIcon size={16} />
-          </button>
-          {short && (
-            <a
-              className="meta-item meta-item-link"
-              href={explorerUrl ?? undefined}
-              target={explorerUrl ? '_blank' : undefined}
-              rel="noreferrer"
-            >
-              <ShieldIcon size={13} />
-              Contract <code>{short}</code>
-            </a>
-          )}
+        <div className="hero-top">
+          <div className="hero-copy">
+            <p className="kicker">the contract</p>
+            <h2 className="hero-title">
+              one tree.
+              <br />
+              membership
+              <br />
+              nobody can read.
+            </h2>
+            <p className="hero-desc">
+              An admin inserts a member's commitment hash into a
+              fixed-depth Merkle tree on-chain. A member later proves
+              their commitment is a leaf of that tree inside a
+              zero-knowledge circuit — without revealing the secret, the
+              leaf's position, or their wallet.
+            </p>
+            <div className="hero-actions">
+              <button className="btn btn-primary btn-lg" onClick={onStart}>
+                Open the app <ArrowRightIcon size={16} />
+              </button>
+              {short && (
+                <a
+                  className="meta-item meta-item-link"
+                  href={explorerUrl ?? undefined}
+                  target={explorerUrl ? '_blank' : undefined}
+                  rel="noreferrer"
+                >
+                  <ShieldIcon size={13} />
+                  Contract <code>{short}</code>
+                </a>
+              )}
+            </div>
+          </div>
+          <div className="hero-diagram">
+            <MerkleDiagram compact />
+          </div>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <strong>1024</strong>
+            <span>max tree leaves</span>
+          </div>
+          <div className="hero-stat">
+            <strong>0</strong>
+            <span>wallets ever linked to a claim</span>
+          </div>
+          <div className="hero-stat">
+            <strong>live</strong>
+            <span>on Midnight Preprod</span>
+          </div>
         </div>
       </section>
 
@@ -177,45 +204,40 @@ function LandingView({ onStart }: { onStart: () => void }) {
         </div>
       </section>
 
-      <section className="proof-row reveal reveal-delay-2">
-        <div className="proof-copy">
-          <p className="section-label">the proof, visually</p>
-          <p className="proof-desc">
-            One path from a leaf to the root is highlighted below — that's
-            what the circuit actually checks. Every other branch stays
-            exactly as dim and unreadable as it is on-chain.
-          </p>
-        </div>
-        <div className="hero-diagram">
-          <MerkleDiagram compact />
-        </div>
-      </section>
-
       <section className="requirements-row reveal reveal-delay-2">
         <p className="section-label">Before you start</p>
-        <div className="requirements-grid">
-          <div className="requirement">
-            <span className="requirement-num">1</span>
+        <div className="requirements-panel">
+          <div className="requirements-panel-head">
+            <span className="requirements-panel-dot" />
+            <span className="requirements-panel-dot" />
+            <span className="requirements-panel-dot" />
+            <span className="requirements-panel-title">setup — three steps, five minutes</span>
+          </div>
+
+          <div className="requirement-step">
+            <span className="requirement-num">01</span>
             <div>
               <strong>Install Lace, set it to Preprod</strong>
               <p>In Lace settings, set the Proof Server URL to <code>localhost:6300</code>.</p>
             </div>
           </div>
-          <div className="requirement">
-            <span className="requirement-num">2</span>
+
+          <div className="requirement-step">
+            <span className="requirement-num">02</span>
             <div>
               <strong>Run the local proof server</strong>
-              <p>Proofs are generated on your machine and never leave it.</p>
+              <p>Proofs are generated on your machine and never leave it — this is what makes the ZK claim real, not just a UI label.</p>
               <code className="requirement-cmd">docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0</code>
             </div>
           </div>
-          <div className="requirement">
-            <span className="requirement-num">3</span>
+
+          <div className="requirement-step">
+            <span className="requirement-num">03</span>
             <div>
               <strong>Fund your wallet</strong>
               <p>
                 Get test tNIGHT/tDUST from the Preprod faucet — see the{' '}
-                <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a>.
+                <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a> for the link.
               </p>
             </div>
           </div>
