@@ -57,10 +57,11 @@ function AppInner() {
               <nav className="nav-links">
                 <a href="#how-it-works">How it works</a>
                 <a href="https://github.com/Spydiecy/zk-pvt-allowlist" target="_blank" rel="noreferrer">GitHub</a>
-                {/* The Start button is redundant once a wallet is connected —
-                    the wallet pill on the right already signals "you're in".
-                    Only show it for a disconnected first-time visitor. */}
-                {!isConnected && (
+                {/* Before a wallet is connected there's nothing to "start" —
+                    connecting is the first step, and that's the wallet
+                    button's job. Once connected, "Start" is the way into
+                    the actual app (claim access / add member). */}
+                {isConnected && (
                   <button className="btn btn-primary btn-sm" onClick={() => setView('app')}>Start</button>
                 )}
               </nav>
@@ -111,76 +112,114 @@ function LandingView({ onStart }: { onStart: () => void }) {
   return (
     <main className="main">
 
-      <section className="hero-split reveal">
-        <div className="hero-copy">
-          <p className="kicker">Preprod · Zero-Knowledge Membership</p>
-          <h2 className="hero-title">
-            Prove you belong.
-            <br />
-            <span className="hero-title-em">Not who you are.</span>
-          </h2>
-          <p className="hero-desc">
-            An admin publishes members as commitment hashes in an on-chain
-            Merkle tree. A member proves inclusion with a zero-knowledge
-            circuit — the chain checks a proof instead of reading a list.
-            No wallet address is ever tied to a specific entry.
-          </p>
-          <div className="hero-actions">
-            <button className="btn btn-primary btn-lg" onClick={onStart}>
-              Open the app <ArrowRightIcon size={16} />
-            </button>
-            {short && (
-              <a
-                className="meta-item meta-item-link"
-                href={explorerUrl ?? undefined}
-                target={explorerUrl ? '_blank' : undefined}
-                rel="noreferrer"
-              >
-                <ShieldIcon size={13} />
-                Contract <code>{short}</code>
-              </a>
-            )}
+      <section className="hero reveal">
+        <p className="kicker">the contract</p>
+        <h2 className="hero-title">one Merkle tree, membership nobody can read</h2>
+        <p className="hero-desc">
+          An admin inserts a member's commitment hash into a fixed-depth
+          tree on-chain. A member later proves their commitment is a leaf
+          of that tree — inside a zero-knowledge circuit — without
+          revealing the secret, the leaf's position, or their wallet.
+          The chain verifies a proof, not a lookup.
+        </p>
+        <div className="hero-actions">
+          <button className="btn btn-primary btn-lg" onClick={onStart}>
+            Open the app <ArrowRightIcon size={16} />
+          </button>
+          {short && (
+            <a
+              className="meta-item meta-item-link"
+              href={explorerUrl ?? undefined}
+              target={explorerUrl ? '_blank' : undefined}
+              rel="noreferrer"
+            >
+              <ShieldIcon size={13} />
+              Contract <code>{short}</code>
+            </a>
+          )}
+        </div>
+      </section>
+
+      <section className="circuit-row reveal reveal-delay-1" id="how-it-works">
+        <div className="circuit-grid">
+          <div className="circuit-card">
+            <div className="circuit-card-head">
+              <strong>add a member</strong>
+              <span className="circuit-index">01</span>
+            </div>
+            <code className="circuit-fn">add_member(commitment: Bytes&lt;32&gt;)</code>
+            <p>Admin inserts a commitment hash as a new leaf in the tree. Only the hash is public — never the secret behind it.</p>
           </div>
+          <div className="circuit-card">
+            <div className="circuit-card-head">
+              <strong>prove membership</strong>
+              <span className="circuit-index">02</span>
+            </div>
+            <code className="circuit-fn">claim_access(secret, path)</code>
+            <p>The circuit checks the secret's commitment resolves to the current root via the private Merkle path — both stay off-chain.</p>
+          </div>
+          <div className="circuit-card">
+            <div className="circuit-card-head">
+              <strong>stop reuse</strong>
+              <span className="circuit-index">03</span>
+            </div>
+            <code className="circuit-fn">assert(!nullifiers.member(...))</code>
+            <p>Inside claim_access, a nullifier derived from the secret is checked and inserted, so one membership can't claim twice.</p>
+          </div>
+          <div className="circuit-card">
+            <div className="circuit-card-head">
+              <strong>read state</strong>
+              <span className="circuit-index">04</span>
+            </div>
+            <code className="circuit-fn">members.isFull(), claims.value</code>
+            <p>Anyone can read allowlist size, total claims, and tree capacity from the ledger — none of it identifies a single member.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="proof-row reveal reveal-delay-2">
+        <div className="proof-copy">
+          <p className="section-label">the proof, visually</p>
+          <p className="proof-desc">
+            One path from a leaf to the root is highlighted below — that's
+            what the circuit actually checks. Every other branch stays
+            exactly as dim and unreadable as it is on-chain.
+          </p>
         </div>
         <div className="hero-diagram">
           <MerkleDiagram compact />
         </div>
       </section>
 
-      <section className="how-row reveal reveal-delay-1" id="how-it-works">
-        <p className="section-label">How it works</p>
-        <div className="how-cols">
-          <div className="how-col">
-            <span className="how-num">1</span>
-            <strong>Admin adds a member</strong>
-            <p>Only a commitment hash goes on-chain — never the secret.</p>
-          </div>
-          <div className="how-col">
-            <span className="how-num">2</span>
-            <strong>Member proves membership</strong>
-            <p>A Merkle path and secret prove inclusion — both stay private.</p>
-          </div>
-          <div className="how-col">
-            <span className="how-num">3</span>
-            <strong>Access claimed on-chain</strong>
-            <p>A one-time nullifier stops reuse — without revealing identity.</p>
-          </div>
-        </div>
-      </section>
-
       <section className="requirements-row reveal reveal-delay-2">
         <p className="section-label">Before you start</p>
-        <ul className="requirements-list">
-          <li>
-            <strong>Lace wallet</strong>, set to Preprod, with the Proof Server pointed at <code>localhost:6300</code>
-          </li>
-          <li>
-            The local proof server running in Docker (<code>docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0</code>) — proofs are generated on your machine, never sent anywhere
-          </li>
-          <li>
-            A small tNIGHT/tDUST balance to cover fees — see the <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a> for the faucet link
-          </li>
-        </ul>
+        <div className="requirements-grid">
+          <div className="requirement">
+            <span className="requirement-num">1</span>
+            <div>
+              <strong>Install Lace, set it to Preprod</strong>
+              <p>In Lace settings, set the Proof Server URL to <code>localhost:6300</code>.</p>
+            </div>
+          </div>
+          <div className="requirement">
+            <span className="requirement-num">2</span>
+            <div>
+              <strong>Run the local proof server</strong>
+              <p>Proofs are generated on your machine and never leave it.</p>
+              <code className="requirement-cmd">docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0</code>
+            </div>
+          </div>
+          <div className="requirement">
+            <span className="requirement-num">3</span>
+            <div>
+              <strong>Fund your wallet</strong>
+              <p>
+                Get test tNIGHT/tDUST from the Preprod faucet — see the{' '}
+                <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a>.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
     </main>

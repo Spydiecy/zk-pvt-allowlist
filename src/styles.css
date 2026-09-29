@@ -170,68 +170,50 @@ a { color: inherit; }
 @media (max-width: 480px) { .logo-text h1 { font-size: 13px; } }
 
 /* ── Main / layout ───────────────────────────────────────────────────────── */
+/* Generous, real spacing between sections — 96px, not 56px. Compact stacking
+   is exactly what read as "AI generated": everything crammed to fit above
+   the fold. A real docs/marketing page breathes. */
 .main {
   flex: 1;
   max-width: 1180px; width: 100%;
   margin: 0 auto;
-  padding: 64px 24px 96px;
-  display: flex; flex-direction: column; gap: 56px;
+  padding: 88px 24px 120px;
+  display: flex; flex-direction: column; gap: 96px;
   position: relative; z-index: 1;
 }
 
 .section-label {
   font-size: 11px; font-weight: 700;
   color: var(--faint); text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 28px;
+  margin-bottom: 32px;
 }
 
-/* ── Hero — editorial, single column, left-aligned ──────────────────────── */
-.hero { max-width: 640px; }
-
-/* ── Hero split — copy left, Merkle diagram right ────────────────────────── */
-.hero-split {
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: 44px;
-  align-items: center;
-}
-.hero-copy { max-width: 560px; }
-.hero-diagram { min-width: 0; }
-@media (max-width: 860px) {
-  .hero-split { grid-template-columns: 1fr; gap: 32px; }
-  .hero-diagram { order: -1; max-width: 420px; margin: 0 auto; width: 100%; }
-}
+/* ── Hero — single column, lowercase literal headline, real breathing room */
+.hero { max-width: 760px; }
 
 .kicker {
-  font-size: 12px; font-weight: 600; color: var(--accent-text);
-  text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 22px;
-  display: flex; align-items: center; gap: 8px;
-}
-.kicker::before {
-  content: ''; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 3px var(--green-dim);
+  font-size: 11px; font-weight: 700; color: var(--faint);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 20px;
 }
 
 .hero-title {
   font-family: 'Fraunces', 'Inter', serif;
-  font-size: 58px; font-weight: 560;
-  letter-spacing: -0.02em; line-height: 1.04;
-  margin-bottom: 24px;
+  font-size: 46px; font-weight: 500;
+  letter-spacing: -0.01em; line-height: 1.15;
+  margin-bottom: 26px;
   color: var(--text);
+  text-transform: lowercase;
 }
-.hero-title-em { color: var(--accent-text); font-style: italic; }
 
 .hero-desc {
-  font-size: 16.5px; color: var(--text-dim);
-  max-width: 480px; line-height: 1.7;
-  margin-bottom: 26px;
+  font-size: 16px; color: var(--text-dim);
+  max-width: 620px; line-height: 1.75;
+  margin-bottom: 32px;
 }
 
 .hero-actions {
-  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  margin-bottom: 26px;
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
 }
 
 .meta-item {
@@ -249,8 +231,51 @@ a { color: inherit; }
 .meta-item-link:hover { border-color: var(--accent-24); color: var(--text-dim); transform: translateY(-1px); }
 
 @media (max-width: 640px) {
-  .hero-title { font-size: 40px; }
+  .hero-title { font-size: 32px; }
 }
+
+/* ── Circuit grid — real function signatures, not marketing copy ────────── */
+.circuit-row { padding-top: 4px; }
+.circuit-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+.circuit-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 26px 28px;
+}
+.circuit-card-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.circuit-card-head strong {
+  font-family: 'Fraunces', serif;
+  font-size: 19px; font-weight: 500;
+  text-transform: lowercase; letter-spacing: -0.01em;
+}
+.circuit-index {
+  font-size: 11px; font-weight: 700; color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+.circuit-fn {
+  display: block; margin-bottom: 14px;
+  font-size: 13px; color: var(--accent-text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 10px 13px;
+  overflow-x: auto; white-space: nowrap;
+}
+.circuit-card p { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+@media (max-width: 760px) {
+  .circuit-grid { grid-template-columns: 1fr; }
+}
+
+/* ── The proof, visually — copy above, diagram below, full width ────────── */
+.proof-row { padding-top: 4px; }
+.proof-copy { max-width: 640px; margin-bottom: 32px; }
+.proof-copy .section-label { margin-bottom: 14px; }
+.proof-desc { font-size: 15px; color: var(--text-dim); line-height: 1.75; }
+.hero-diagram { min-width: 0; max-width: 720px; }
 
 /* ── Live stat strip ─────────────────────────────────────────────────────── */
 .stat-strip {
@@ -283,72 +308,44 @@ a { color: inherit; }
   .stat-cell { padding: 12px 14px; }
 }
 
-/* ── How it works — a connected line-timeline, not a card grid ──────────── */
-/* Deliberately NOT another icon-in-a-box 3-column grid (that pattern is
-   already used once for "Use cases" and once for "Get started" — repeating
-   it a third time is the single biggest "generated template" tell on this
-   page). Instead: one continuous rule threading through three nodes,
-   echoing the Merkle-path line-drawing already established by the hero
-   diagram, so the whole page reads as one visual idea rather than three
-   copies of a component. */
-.how-row { padding-top: 8px; }
-.how-cols {
-  display: flex; align-items: flex-start; position: relative;
-  padding-top: 6px;
+/* ── Before you start — three real setup steps, own cards ────────────────── */
+.requirements-row { padding-top: 4px; }
+.requirements-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
 }
-.how-cols::before {
-  content: '';
-  position: absolute; top: 15px; left: 15px; right: 15px; height: 1px;
-  background: linear-gradient(90deg, var(--accent-24), var(--border) 12%, var(--border) 88%, var(--accent-24));
+.requirement {
+  display: flex; gap: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 24px;
 }
-.how-col {
-  flex: 1; display: flex; flex-direction: column; gap: 8px;
-  padding-right: 28px; position: relative;
-}
-.how-col:last-child { padding-right: 0; }
-.how-num {
-  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+.requirement-num {
+  flex-shrink: 0;
+  width: 24px; height: 24px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: var(--bg);
-  font-variant-numeric: tabular-nums; letter-spacing: 0.02em;
-  background: var(--accent-h);
-  box-shadow: 0 0 0 5px var(--bg);
-  position: relative; z-index: 1;
-  margin-bottom: 6px;
+  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--accent-text); border: 1px solid var(--accent-24);
 }
-.how-col strong { font-size: 14.5px; font-weight: 650; }
-.how-col p { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 26ch; }
-@media (max-width: 700px) {
-  .how-cols { flex-direction: column; gap: 26px; }
-  .how-cols::before { top: 15px; bottom: 15px; left: 15px; width: 1px; height: auto; right: auto; background: linear-gradient(180deg, var(--accent-24), var(--border) 12%, var(--border) 88%, var(--accent-24)); }
-  .how-col { padding-right: 0; padding-left: 46px; }
-  .how-num { position: absolute; left: 0; top: 0; margin-bottom: 0; }
+.requirement strong { display: block; font-size: 13.5px; font-weight: 650; margin-bottom: 6px; }
+.requirement p { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+.requirement-cmd {
+  display: block; margin-top: 10px;
+  font-size: 11px; color: var(--accent-text);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 8px 10px;
+  white-space: pre-wrap; word-break: break-all; line-height: 1.5;
 }
-
-/* ── Before you start — plain checklist, not decorative ──────────────────── */
-.requirements-row { padding-top: 4px; padding-bottom: 8px; }
-.requirements-list {
-  list-style: none;
-  display: flex; flex-direction: column; gap: 14px;
-  max-width: 640px;
-}
-.requirements-list li {
-  position: relative; padding-left: 22px;
-  font-size: 13.5px; color: var(--muted); line-height: 1.6;
-}
-.requirements-list li::before {
-  content: '—';
-  position: absolute; left: 0; top: 0;
-  color: var(--accent-24); font-weight: 700;
-}
-.requirements-list strong { color: var(--text-dim); font-weight: 650; }
-.requirements-list code {
+.requirement code {
   font-size: 12px; color: var(--accent-text);
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 5px; padding: 2px 6px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 1px 6px;
 }
-.requirements-list a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--accent-24); }
-.requirements-list a:hover { text-decoration-color: var(--accent-text); }
+.requirement a { color: var(--accent-text); text-decoration: underline; text-decoration-color: var(--accent-24); }
+.requirement a:hover { text-decoration-color: var(--accent-text); }
+@media (max-width: 860px) {
+  .requirements-grid { grid-template-columns: 1fr; }
+}
 
 /* ── Action panel — the core feature, two-column form layout ────────────── */
 .action-panel {
