@@ -1,6 +1,6 @@
 /**
  * providers.ts
- * Wires Lace wallet → ZK config → proof provider → indexer → midnight provider.
+ * Wires the connected Midnight wallet → ZK config → proof provider → indexer → midnight provider.
  * Follows the official example-bboard pattern exactly.
  */
 
@@ -57,7 +57,7 @@ function getFirstCompatibleWallet(): InitialAPI | undefined {
 }
 
 export async function connectToWallet(networkId: string): Promise<ConnectedAPI> {
-  // Poll for wallet availability — Lace can take a moment to inject window.midnight
+  // Poll for wallet availability — the wallet extension can take a moment to inject window.midnight
   const initialAPI = await firstValueFrom(
     interval(200).pipe(
       map(() => getFirstCompatibleWallet()),
@@ -69,14 +69,14 @@ export async function connectToWallet(networkId: string): Promise<ConnectedAPI> 
           throwError(
             () =>
               new Error(
-                'Midnight Lace wallet not found. Install the Lace extension and enable it.',
+                'Midnight wallet not found. Install a Midnight-compatible wallet extension and enable it.',
               ),
           ),
       }),
     ),
   );
 
-  // Attempt connect with retries — Lace may show "locked" on first attempt
+  // Attempt connect with retries — the wallet may show "locked" on first attempt
   // even when unlocked if the extension service worker is just waking up.
   let lastError: Error | null = null;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -84,7 +84,7 @@ export async function connectToWallet(networkId: string): Promise<ConnectedAPI> 
       const api = await Promise.race([
         initialAPI.connect(networkId),
         new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('Lace wallet did not respond within 15s. Make sure it is unlocked and set to Preprod.')), 15_000),
+          setTimeout(() => reject(new Error('Wallet did not respond within 15s. Make sure it is unlocked and set to Preprod.')), 15_000),
         ),
       ]);
       return api;
@@ -150,7 +150,7 @@ export async function initializeProviders(connectedAPI: ConnectedAPI): Promise<A
   return {
     privateStateProvider,
     zkConfigProvider,
-    // Use proverServerUri from wallet config — Lace handles the proof server URL
+    // Use proverServerUri from wallet config — the wallet handles the proof server URL
     proofProvider: httpClientProofProvider(
       config.proverServerUri ?? 'http://localhost:6300',
       zkConfigProvider,

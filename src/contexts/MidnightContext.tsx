@@ -119,7 +119,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     while (root?.failure) root = root.failure;
     const msg: string = root?.message ?? err?.message ?? String(err);
     if (msg.includes('dust') || msg.includes('Dust') || msg.includes('DUST')) {
-      return 'No DUST tokens — open Lace → Tokens → Generate tDUST, then retry.';
+      return 'No DUST tokens — open your wallet → Tokens → Generate tDUST, then retry.';
     }
     if (msg.includes('not on the allowlist')) {
       return 'This secret is not on the allowlist. Ask an admin to add it first.';

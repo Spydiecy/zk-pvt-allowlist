@@ -131,7 +131,7 @@ export function Allowlist() {
                 {isBusy ? <><span className="spin" /> Generating ZK proof…</> : <>Claim access <ArrowRightIcon /></>}
               </button>
 
-              {!isConnected && <p className="helper-note" style={{ textAlign: 'center' }}>Connect your Lace wallet to continue</p>}
+              {!isConnected && <p className="helper-note" style={{ textAlign: 'center' }}>Connect your wallet to continue</p>}
             </form>
           </>
         ) : (
@@ -182,7 +182,7 @@ export function Allowlist() {
                 {isBusy ? <><span className="spin" /> Submitting…</> : <>Add member to allowlist <ArrowRightIcon /></>}
               </button>
 
-              {!isConnected && <p className="helper-note" style={{ textAlign: 'center' }}>Connect your Lace wallet to continue</p>}
+              {!isConnected && <p className="helper-note" style={{ textAlign: 'center' }}>Connect your wallet to continue</p>}
             </form>
           </>
         )}

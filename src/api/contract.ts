@@ -48,7 +48,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
     const timer = setTimeout(() => {
       reject(new Error(
         `${label} is taking longer than expected (over ${Math.round(ms / 1000)}s). ` +
-        `The transaction may still confirm — check Lace or the indexer before retrying.`,
+        `The transaction may still confirm — check your wallet or the indexer before retrying.`,
       ));
     }, ms);
     promise.then(

@@ -33,7 +33,7 @@ flowchart TB
     end
 
     subgraph LocalMachine["User's Machine"]
-        Lace["Lace Wallet Extension<br/>(DApp Connector API v4)"]
+        Wallet["Midnight Wallet Extension<br/>(DApp Connector API v4)"]
         ProofServer["Proof Server<br/>(Docker, localhost:6300)"]
     end
 
@@ -49,11 +49,11 @@ flowchart TB
         Claims["claims: Counter"]
     end
 
-    UI -->|"1. connect()"| Lace
-    UI -->|"2. add_member(commitment)<br/>claim_access(secret, path) — private"| Lace
-    Lace -->|"3. generate ZK proof<br/>(secret never leaves machine)"| ProofServer
-    ProofServer -->|"4. proof"| Lace
-    Lace -->|"5. balance + sign + submit tx"| Node
+    UI -->|"1. connect()"| Wallet
+    UI -->|"2. add_member(commitment)<br/>claim_access(secret, path) — private"| Wallet
+    Wallet -->|"3. generate ZK proof<br/>(secret never leaves machine)"| ProofServer
+    ProofServer -->|"4. proof"| Wallet
+    Wallet -->|"5. balance + sign + submit tx"| Node
     Node --> Contract
     Contract --> Tree
     Contract --> Null
@@ -69,9 +69,9 @@ flowchart TB
 
 **Read path (anyone, no wallet needed):** Browser → Indexer → on-chain `members`/`nullifiers`/`claims` — this is how the live stat strip on the landing page reads allowlist size and claim count without any transaction.
 
-**Write path (`add_member`, admin):** Browser sends a public commitment hash to Lace → Lace proves and submits → Node appends a new leaf to `members`. The secret behind the commitment is never touched here.
+**Write path (`add_member`, admin):** Browser sends a public commitment hash to the wallet → the wallet proves and submits → Node appends a new leaf to `members`. The secret behind the commitment is never touched here.
 
-**Write path (`claim_access`, member):** Browser sends `secret` + Merkle `path` as *private circuit witnesses* to Lace → the ZK proof is generated locally against the Proof Server on `localhost:6300` (never sent anywhere) → only the proof, plus a one-time nullifier, is submitted on-chain. See [Privacy Model](#privacy-model) below for exactly what's public vs private at each step.
+**Write path (`claim_access`, member):** Browser sends `secret` + Merkle `path` as *private circuit witnesses* to the wallet → the ZK proof is generated locally against the Proof Server on `localhost:6300` (never sent anywhere) → only the proof, plus a one-time nullifier, is submitted on-chain. See [Privacy Model](#privacy-model) below for exactly what's public vs private at each step.
 
 ## Privacy Model
 
@@ -96,11 +96,11 @@ flowchart TB
 - Midnight.js SDK v4.1.1
 - DApp Connector API v4.0.1
 - React 19 + Vite 6
-- Lace Wallet
+- Midnight-compatible wallet extension
 
 ## Prerequisites
 
-- [Lace wallet](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) — set Network to **Preprod**, Proof Server to `http://localhost:6300`
+- A Midnight wallet browser extension, e.g. [Lace](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) — set Network to **Preprod**, Proof Server to `http://localhost:6300`
 - Docker Desktop running
 - Node.js v22+
 
@@ -117,7 +117,7 @@ npm install --legacy-peer-deps
 # Start the local proof server (required — private data never leaves your machine)
 docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0
 
-# Generate tDUST in Lace: Tokens → Generate tDUST → confirm
+# Generate tDUST in your wallet: Tokens → Generate tDUST → confirm
 
 # Start dev server
 npm run dev

@@ -37,7 +37,7 @@ export function WalletConnect() {
       <div className="wallet-area" style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
         <div className="wallet-error">
           {isLocked
-            ? <><LockIcon size={13} /> Lace service worker is locked. In Lace: lock the wallet → enter password → retry.</>
+            ? <><LockIcon size={13} /> Wallet service worker is locked. Unlock your wallet, enter your password, then retry.</>
             : walletError}
         </div>
         <button className="btn btn-primary btn-sm" onClick={connect}>Retry</button>

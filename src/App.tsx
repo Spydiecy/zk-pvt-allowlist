@@ -202,8 +202,8 @@ function LandingView({ onStart }: { onStart: () => void }) {
           <div className="requirement-step">
             <span className="requirement-num">01</span>
             <div>
-              <strong>Install Lace, set it to Preprod</strong>
-              <p>In Lace settings, set the Proof Server URL to <code>localhost:6300</code>.</p>
+              <strong>Install a Midnight wallet, set it to Preprod</strong>
+              <p>In your wallet's settings, set the Proof Server URL to <code>localhost:6300</code>.</p>
             </div>
           </div>
 
