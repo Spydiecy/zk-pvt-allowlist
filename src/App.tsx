@@ -57,13 +57,6 @@ function AppInner() {
               <nav className="nav-links">
                 <a href="#how-it-works">How it works</a>
                 <a href="https://github.com/Spydiecy/zk-pvt-allowlist" target="_blank" rel="noreferrer">GitHub</a>
-                {/* Before a wallet is connected there's nothing to "start" —
-                    connecting is the first step, and that's the wallet
-                    button's job. Once connected, "Start" is the way into
-                    the actual app (claim access / add member). */}
-                {isConnected && (
-                  <button className="btn btn-primary btn-sm" onClick={() => setView('app')}>Start</button>
-                )}
               </nav>
             ) : (
               <nav className="nav-links">
@@ -71,7 +64,16 @@ function AppInner() {
               </nav>
             )}
 
-            <WalletConnect />
+            <div className="header-right">
+              <WalletConnect />
+              {/* Before a wallet is connected there's nothing to "start" —
+                  connecting is the first step, and that's the wallet
+                  button's job. Once connected, "Start" is the way into
+                  the actual app (claim access / add member). */}
+              {view === 'landing' && isConnected && (
+                <button className="btn btn-primary btn-sm" onClick={() => setView('app')}>Start</button>
+              )}
+            </div>
           </div>
         </header>
 
@@ -149,20 +151,6 @@ function LandingView({ onStart }: { onStart: () => void }) {
           </div>
           <div className="hero-diagram">
             <MerkleDiagram compact />
-          </div>
-        </div>
-        <div className="hero-stats">
-          <div className="hero-stat">
-            <strong>1024</strong>
-            <span>max tree leaves</span>
-          </div>
-          <div className="hero-stat">
-            <strong>0</strong>
-            <span>wallets ever linked to a claim</span>
-          </div>
-          <div className="hero-stat">
-            <strong>live</strong>
-            <span>on Midnight Preprod</span>
           </div>
         </div>
       </section>
