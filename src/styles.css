@@ -287,35 +287,38 @@ a { color: inherit; }
 
 .hero-diagram { min-width: 0; }
 
-/* ── Live stat strip ─────────────────────────────────────────────────────── */
+/* ── Live stat strip — a data readout, not icon chips ────────────────────── */
+/* No icon-in-a-rounded-square badges — those are the same "AI dashboard"
+   tell we already removed from the landing page. This reads like a status
+   line: a monospace label, a large tabular number, nothing decorative. */
 .stat-strip {
   display: flex; align-items: stretch;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 4px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 22px 0;
 }
 .stat-cell {
-  flex: 1; display: flex; align-items: center; gap: 13px;
-  padding: 16px 20px;
+  flex: 1; display: flex; flex-direction: column; gap: 6px;
+  padding: 0 28px;
 }
-.stat-icon {
-  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--accent-10); color: var(--accent-text);
+.stat-label {
+  font-size: 11px; font-weight: 700; color: var(--faint);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  font-family: 'SF Mono', monospace;
 }
-.stat-icon-green { background: var(--green-dim); color: var(--green); }
-.stat-icon-red { background: var(--red-dim); color: var(--red); }
 .stat-value {
-  font-size: 21px; font-weight: 700; letter-spacing: -0.02em;
+  font-family: 'Fraunces', serif;
+  font-size: 30px; font-weight: 500; letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums; line-height: 1.2;
+  color: var(--text);
 }
-.stat-label { font-size: 12px; color: var(--faint); margin-top: 1px; }
-.stat-div { width: 1px; background: var(--border); margin: 10px 0; flex-shrink: 0; }
+.stat-value.tone-green { color: var(--green); }
+.stat-value.tone-red { color: var(--red); }
+.stat-div { width: 1px; background: var(--border); flex-shrink: 0; }
 @media (max-width: 640px) {
-  .stat-strip { flex-direction: column; padding: 6px; }
+  .stat-strip { flex-direction: column; gap: 18px; padding: 20px 0; }
   .stat-div { display: none; }
-  .stat-cell { padding: 12px 14px; }
+  .stat-cell { padding: 0 4px; }
 }
 
 /* ── Before you start — a terminal-styled setup panel ─────────────────────── */
@@ -382,17 +385,18 @@ a { color: inherit; }
   padding: 8px;
 }
 .action-panel-head {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: flex-end; justify-content: space-between;
   flex-wrap: wrap; gap: 12px;
-  padding: 16px 20px 12px;
+  padding: 20px 24px 0;
+  border-bottom: 1px solid var(--border);
 }
 .action-panel-privacy {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 11.5px; color: var(--faint);
+  padding-bottom: 12px;
 }
 .action-panel-body {
   display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 0;
-  border-top: 1px solid var(--border);
 }
 .action-col { padding: 28px 32px; }
 .action-col:first-child { border-right: 1px solid var(--border); }
@@ -405,20 +409,26 @@ a { color: inherit; }
 .action-col h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 10px; }
 .action-col .sub { font-size: 13.5px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; }
 
+/* File-tab style, not a rounded pill switcher — an underline on the active
+   tab, plain text otherwise. Reads like an editor's tab bar, not a SaaS
+   segmented control. */
 .tab-group {
-  display: inline-flex; gap: 3px; padding: 4px;
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 11px;
+  display: flex; gap: 24px;
 }
 .tab-btn {
   border: none; background: transparent; color: var(--muted);
-  font-size: 12.5px; font-weight: 600; font-family: inherit;
-  padding: 8px 16px; border-radius: 8px; cursor: pointer;
-  transition: color 0.2s, background 0.25s var(--ease);
+  font-size: 13px; font-weight: 600; font-family: inherit;
+  padding: 0 0 12px; cursor: pointer;
+  position: relative;
+  transition: color 0.2s;
 }
 .tab-btn:hover { color: var(--text); }
-.tab-btn-active { background: var(--accent); color: #14100a; box-shadow: 0 3px 10px -2px rgba(216,163,77,0.5); }
-.tab-btn-active:hover { color: #14100a; }
+.tab-btn-active { color: var(--text); }
+.tab-btn-active::after {
+  content: '';
+  position: absolute; left: 0; right: 0; bottom: 0;
+  height: 2px; background: var(--accent);
+}
 
 .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
 .form-label { font-size: 12px; font-weight: 600; color: var(--muted); }
@@ -442,15 +452,15 @@ a { color: inherit; }
 .form-hint.ok  { color: var(--green); }
 .form-hint.bad { color: var(--red); }
 
-.zk-disclaimer {
-  display: flex; align-items: flex-start; gap: 11px;
-  background: var(--accent-06);
-  border: 1px solid var(--accent-16);
-  border-radius: var(--r-md); padding: 14px 15px;
-  font-size: 12.5px; color: var(--text-dim); line-height: 1.6;
+/* A plain annotated line instead of a boxed, icon'd callout — matches the
+   circuit-fn code-line style already used on the landing page rather than
+   introducing a new "info box" pattern. */
+.zk-note {
+  font-size: 12.5px; color: var(--muted); line-height: 1.7;
+  padding-left: 14px; border-left: 2px solid var(--accent-24);
   margin-bottom: 20px;
 }
-.zk-icon { flex-shrink: 0; margin-top: 1px; color: var(--accent-text); }
+.zk-note strong { color: var(--text-dim); font-weight: 650; }
 
 .helper-note {
   font-size: 12px; color: var(--faint); margin-top: 14px; line-height: 1.6;

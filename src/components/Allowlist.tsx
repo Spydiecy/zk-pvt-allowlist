@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useMidnight } from '../contexts/useMidnight.tsx';
-import { LockIcon, BoltIcon, DiceIcon, AlertIcon, ArrowRightIcon } from './icons';
+import { LockIcon, DiceIcon, AlertIcon, ArrowRightIcon } from './icons';
 
 /**
  * Allowlist.tsx — the core privacy feature UI.
@@ -88,14 +88,11 @@ export function Allowlist() {
                 it belongs to the allowlist tree — without revealing the secret itself
                 or which member you are.
               </p>
-              <div className="zk-disclaimer">
-                <span className="zk-icon"><BoltIcon /></span>
-                <span>
-                  <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Proved, not disclosed.</strong>
-                  {' '}The chain verifies your commitment matches a leaf in the tree and
-                  spends a one-time nullifier — nothing else is ever visible on-chain.
-                </span>
-              </div>
+              <p className="zk-note">
+                <strong>Proved, not disclosed.</strong> The chain verifies your
+                commitment matches a leaf in the tree and spends a one-time
+                nullifier — nothing else is ever visible on-chain.
+              </p>
             </div>
 
             <form className="action-col" onSubmit={handleClaim}>

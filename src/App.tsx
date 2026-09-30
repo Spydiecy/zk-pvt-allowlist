@@ -7,7 +7,7 @@ import { Allowlist } from './components/Allowlist';
 import { Toaster } from './components/Toaster';
 import { ResultModal } from './components/ResultModal';
 import { MerkleDiagram } from './components/MerkleDiagram';
-import { LogoMark, ShieldIcon, TreeIcon, PulseIcon, ArrowRightIcon } from './components/icons';
+import { LogoMark, ShieldIcon, ArrowRightIcon } from './components/icons';
 import './styles.css';
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
@@ -19,14 +19,11 @@ const explorerUrl = CONTRACT_ADDRESS
   ? `https://explorer.${NETWORK_ID}.midnight.network/contracts/stream/${CONTRACT_ADDRESS}`
   : null;
 
-function StatCell({ label, value, icon, tone }: { label: string; value: string; icon: React.ReactNode; tone?: 'green' | 'red' }) {
+function StatCell({ label, value, tone }: { label: string; value: string; tone?: 'green' | 'red' }) {
   return (
     <div className="stat-cell">
-      <span className={`stat-icon ${tone ? `stat-icon-${tone}` : ''}`}>{icon}</span>
-      <div>
-        <p className="stat-value">{value}</p>
-        <p className="stat-label">{label}</p>
-      </div>
+      <p className="stat-label">{label}</p>
+      <p className={`stat-value ${tone ? `tone-${tone}` : ''}`}>{value}</p>
     </div>
   );
 }
@@ -244,15 +241,14 @@ function AppView({ contractState }: { contractState: ReturnType<typeof useMidnig
   return (
     <main className="main">
       <section className="stat-strip reveal">
-        <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} icon={<TreeIcon size={14} />} />
+        <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} />
         <span className="stat-div" />
-        <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '—'} icon={<PulseIcon size={14} />} />
+        <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '—'} />
         <span className="stat-div" />
         <StatCell
           label="Tree capacity"
           value={contractState === null ? '—' : contractState.isFull ? 'Full' : 'Open'}
           tone={contractState?.isFull ? 'red' : 'green'}
-          icon={<ShieldIcon size={14} />}
         />
       </section>
 
