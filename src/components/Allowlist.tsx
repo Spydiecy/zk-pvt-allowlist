@@ -3,16 +3,16 @@ import { useMidnight } from '../contexts/useMidnight.tsx';
 import { LockIcon, DiceIcon, AlertIcon, ArrowRightIcon } from './icons';
 
 /**
- * Allowlist.tsx — the core privacy feature UI.
+ * Allowlist.tsx: the core privacy feature UI.
  *
  * Two roles, one contract:
  *  - Admin: publish a member's identity commitment on-chain (add_member)
  *  - Member: prove membership and claim access without revealing which
- *    member they are (claim_access) — a Merkle path + secret are supplied
+ *    member they are (claim_access). A Merkle path + secret are supplied
  *    as private witnesses and never transmitted anywhere.
  *
  * On-chain state (allowlist size, claims, capacity) is rendered by the
- * stat strip in App.tsx — this component is purely the action panel.
+ * stat strip in App.tsx. This component is purely the action panel.
  */
 
 function randomSecretHex(): string {
@@ -85,13 +85,13 @@ export function Allowlist() {
               <h3>Prove Membership</h3>
               <p className="sub">
                 Enter the identity secret you were given. A zero-knowledge proof shows
-                it belongs to the allowlist tree — without revealing the secret itself
+                it belongs to the allowlist tree, without revealing the secret itself
                 or which member you are.
               </p>
               <p className="zk-note">
                 <strong>Proved, not disclosed.</strong> The chain verifies your
                 commitment matches a leaf in the tree and spends a one-time
-                nullifier — nothing else is ever visible on-chain.
+                nullifier. Nothing else is ever visible on-chain.
               </p>
             </div>
 
@@ -140,11 +140,11 @@ export function Allowlist() {
               <h3>Add a Member</h3>
               <p className="sub">
                 Admin-side action. Publishes a commitment hash derived from the member's
-                secret as a new leaf in the allowlist tree — the secret itself is never
+                secret as a new leaf in the allowlist tree. The secret itself is never
                 stored or transmitted.
               </p>
               <p className="helper-note" style={{ margin: 0 }}>
-                Share the generated secret with the member out of band — it's their
+                Share the generated secret with the member out of band. It's their
                 private key to claim access later, via the "Claim Access" tab.
               </p>
             </div>

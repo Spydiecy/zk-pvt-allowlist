@@ -16,11 +16,11 @@
 
 ## What This Product Does
 
-Private Allowlist lets an admin publish a gated list of approved identities on-chain — and lets members prove they're on that list without revealing which entry is theirs. An admin commits each member's identity as a hash (a "commitment") into an on-chain Merkle tree. A member later proves membership by supplying their private secret and a Merkle path as witnesses to a zero-knowledge circuit — the proof shows the commitment is a real leaf of the tree, without disclosing the secret, the leaf position, or the member's identity.
+Private Allowlist lets an admin publish a gated list of approved identities on-chain, and lets members prove they're on that list without revealing which entry is theirs. An admin commits each member's identity as a hash (a "commitment") into an on-chain Merkle tree. A member later proves membership by supplying their private secret and a Merkle path as witnesses to a zero-knowledge circuit: the proof shows the commitment is a real leaf of the tree, without disclosing the secret, the leaf position, or the member's identity.
 
-This solves a problem every token-gated mint, DAO membership check, and KYC'd DeFi product runs into today: allowlists are almost always public, leaking every approved address to anyone watching the chain. Private Allowlist keeps the list's *contents* private while keeping its *membership rules* fully verifiable — a Merkle root is public, individual entries are not.
+This solves a problem every token-gated mint, DAO membership check, and KYC'd DeFi product runs into today: allowlists are almost always public, leaking every approved address to anyone watching the chain. Private Allowlist keeps the list's *contents* private while keeping its *membership rules* fully verifiable: a Merkle root is public, individual entries are not.
 
-Midnight is the only practical way to build this. On a transparent chain, "checking membership" requires reading the list, which means the list itself is public. Midnight's Compact circuits let the membership check happen entirely in zero-knowledge — the chain verifies a mathematical proof instead of reading the data.
+Midnight is the only practical way to build this. On a transparent chain, "checking membership" requires reading the list, which means the list itself is public. Midnight's Compact circuits let the membership check happen entirely in zero-knowledge: the chain verifies a mathematical proof instead of reading the data.
 
 ## Architecture
 
@@ -50,7 +50,7 @@ flowchart TB
     end
 
     UI -->|"1. connect()"| Wallet
-    UI -->|"2. add_member(commitment)<br/>claim_access(secret, path) — private"| Wallet
+    UI -->|"2. add_member(commitment)<br/>claim_access(secret, path): private"| Wallet
     Wallet -->|"3. generate ZK proof<br/>(secret never leaves machine)"| ProofServer
     ProofServer -->|"4. proof"| Wallet
     Wallet -->|"5. balance + sign + submit tx"| Node
@@ -67,7 +67,7 @@ flowchart TB
     class Tree,Null,Claims onchain
 ```
 
-**Read path (anyone, no wallet needed):** Browser → Indexer → on-chain `members`/`nullifiers`/`claims` — this is how the live stat strip on the landing page reads allowlist size and claim count without any transaction.
+**Read path (anyone, no wallet needed):** Browser → Indexer → on-chain `members`/`nullifiers`/`claims`. This is how the live stat strip on the landing page reads allowlist size and claim count without any transaction.
 
 **Write path (`add_member`, admin):** Browser sends a public commitment hash to the wallet → the wallet proves and submits → Node appends a new leaf to `members`. The secret behind the commitment is never touched here.
 
@@ -77,7 +77,7 @@ flowchart TB
 
 - **PUBLIC (on-chain, anyone can see):**
   - The Merkle root of the allowlist tree (updated each time a member is added)
-  - The set of nullifiers — one per successful claim, proving *a* claim happened
+  - The set of nullifiers (one per successful claim, proving *a* claim happened)
   - The total count of members and total claims
 
 - **PRIVATE (private witness, never on-chain):**
@@ -92,7 +92,7 @@ flowchart TB
 ## Tech Stack
 
 - Midnight Network (Preprod)
-- Compact — ZK smart contract language, `MerkleTree<10, Bytes<32>>` ledger type
+- Compact: ZK smart contract language, `MerkleTree<10, Bytes<32>>` ledger type
 - Midnight.js SDK v4.1.1
 - DApp Connector API v4.0.1
 - React 19 + Vite 6
@@ -100,7 +100,7 @@ flowchart TB
 
 ## Prerequisites
 
-- A Midnight wallet browser extension, e.g. [Lace](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk) — set Network to **Preprod**, Proof Server to `http://localhost:6300`
+- A Midnight wallet browser extension, e.g. [Lace](https://chromewebstore.google.com/detail/lace/gafhhkghbfjjkeiendhlofajokpaflmk); set Network to **Preprod**, Proof Server to `http://localhost:6300`
 - Docker Desktop running
 - Node.js v22+
 
@@ -114,7 +114,7 @@ cd zk-pvt-allowlist
 # Install
 npm install --legacy-peer-deps
 
-# Start the local proof server (required — private data never leaves your machine)
+# Start the local proof server (required; private data never leaves your machine)
 docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0
 
 # Generate tDUST in your wallet: Tokens → Generate tDUST → confirm
@@ -130,7 +130,7 @@ npm run dev
 npm run test:run
 ```
 
-32 tests passing — circuit logic, state transitions, and privacy isolation across the allowlist, age-gate, and counter contracts.
+32 tests passing: circuit logic, state transitions, and privacy isolation across the allowlist, age-gate, and counter contracts.
 
 ## CI/CD
 
@@ -146,9 +146,9 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 
 ## Product X Profile
 
-[@zkallowlist](https://x.com/zkallowlist) — [launch post](https://x.com/zkallowlist/status/2090399870398206375?s=20)
+[@zkallowlist](https://x.com/zkallowlist). [launch post](https://x.com/zkallowlist/status/2090399870398206375?s=20)
 
-## Level 5 — User Validation
+## Level 5: User Validation
 
 - Target: 50 Preprod users
 - Current: 50 / 50 ✅
@@ -159,7 +159,7 @@ See [docs/USAGE.md](./docs/USAGE.md) for a step-by-step, non-technical walkthrou
 
 ### Users Onboarded
 
-Full names, wallet addresses, and email addresses for all 50 respondents are recorded in the [Google Sheet](https://docs.google.com/spreadsheets/d/1H6BckdFSDrBmMohRy76c6czPAEFw4XN5K5lbel8LEXY/edit?usp=sharing) linked above (email addresses are kept out of this public repo intentionally — see note below). The table below is the public-safe summary: user ID, name, wallet address, and a one-line feedback summary for each of the 50 onboarded users.
+Full names, wallet addresses, and email addresses for all 50 respondents are recorded in the [Google Sheet](https://docs.google.com/spreadsheets/d/1H6BckdFSDrBmMohRy76c6czPAEFw4XN5K5lbel8LEXY/edit?usp=sharing) linked above (email addresses are kept out of this public repo intentionally, see note below). The table below is the public-safe summary: user ID, name, wallet address, and a one-line feedback summary for each of the 50 onboarded users.
 
 > **Why no email column here:** this repository is public. Publishing 50 people's personal email addresses in a public GitHub README would expose their PII to anyone who clones or indexes this repo. Emails are collected and stored in the access-controlled Google Sheet (the mandatory format for this level) rather than inlined into a public file. Reach out if verification of a specific email is needed for review.
 

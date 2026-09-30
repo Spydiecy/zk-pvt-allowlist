@@ -74,7 +74,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
           const deployed = await joinAllowlist(providers, CONTRACT_ADDRESS);
           deployedRef.current = deployed;
 
-          // Immediate first read — don't wait on the live subscription's first emission.
+          // Immediate first read, don't wait on the live subscription's first emission.
           deployed.refreshState().then(setContractState).catch(() => {});
 
           stateSubRef.current?.unsubscribe();
@@ -119,7 +119,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
     while (root?.failure) root = root.failure;
     const msg: string = root?.message ?? err?.message ?? String(err);
     if (msg.includes('dust') || msg.includes('Dust') || msg.includes('DUST')) {
-      return 'No DUST tokens — open your wallet → Tokens → Generate tDUST, then retry.';
+      return 'No DUST tokens: open your wallet → Tokens → Generate tDUST, then retry.';
     }
     if (msg.includes('not on the allowlist')) {
       return 'This secret is not on the allowlist. Ask an admin to add it first.';
@@ -145,7 +145,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
   const addMember = useCallback(async (secretHex: string) => {
     if (!deployedRef.current) {
       setTxStatus('failed');
-      setTxError('Contract not loaded — disconnect and reconnect your wallet.');
+      setTxError('Contract not loaded, disconnect and reconnect your wallet.');
       return;
     }
     setTxStatus('proving');
@@ -156,7 +156,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
       const txId = await deployedRef.current.addMember(secretHex);
       setLastTxId(txId);
       setTxStatus('confirmed');
-      // Force-refresh immediately — don't rely solely on the live subscription.
+      // Force-refresh immediately, don't rely solely on the live subscription.
       deployedRef.current.refreshState().then(setContractState).catch(() => {});
     } catch (err: any) {
       setTxStatus('failed');
@@ -167,7 +167,7 @@ export function MidnightProvider({ children }: { children: ReactNode }) {
   const claimAccess = useCallback(async (secretHex: string) => {
     if (!deployedRef.current) {
       setTxStatus('failed');
-      setTxError('Contract not loaded — disconnect and reconnect your wallet.');
+      setTxError('Contract not loaded, disconnect and reconnect your wallet.');
       return;
     }
     setTxStatus('proving');

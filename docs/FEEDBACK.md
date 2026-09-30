@@ -1,4 +1,4 @@
-# User Feedback — Level 5
+# User Feedback: Level 5
 
 ## Feedback Collection Method
 
@@ -12,12 +12,12 @@ Each piece of feedback is logged below with the date it was received, before bei
 
 ## Raw Feedback Log
 
-Full raw responses (timestamp, wallet, feedback, name, email, tx URLs) are collected in the mandatory Google Sheet — see README.md for the link. The table below mirrors that sheet's content for quick reference in-repo.
+Full raw responses (timestamp, wallet, feedback, name, email, tx URLs) are collected in the mandatory Google Sheet; see README.md for the link. The table below mirrors that sheet's content for quick reference in-repo.
 
 | # | Timestamp | Wallet Address | Feedback | Name | Tx URL(s) |
 |---|-----------|-----------------|----------|------|-----------|
-| 1 | 2026-09-21 15:05:35 | `mn_addr_preprod1pj74d4syemzl5u0yvagf8dkmhg2n4fmfgsklr76906c3tcyjshkqr9nlur` | Its working fine i guess good for membership system | Aarav Sharma | — |
-| 2 | 2026-09-21 15:11:28 | `mn_addr_preprod16ynpfj7d28a2h5mhtnmfnrn8yde0gs7rwghjmg2fm374ycajdk2s40tdjz` | All things seemed as mentioned and working nicely. Good product | Aditi Patel | — |
+| 1 | 2026-09-21 15:05:35 | `mn_addr_preprod1pj74d4syemzl5u0yvagf8dkmhg2n4fmfgsklr76906c3tcyjshkqr9nlur` | Its working fine i guess good for membership system | Aarav Sharma | - |
+| 2 | 2026-09-21 15:11:28 | `mn_addr_preprod16ynpfj7d28a2h5mhtnmfnrn8yde0gs7rwghjmg2fm374ycajdk2s40tdjz` | All things seemed as mentioned and working nicely. Good product | Aditi Patel | - |
 | 3 | 2026-09-22 22:26:28 | `mn_addr_preprod1uw2zcklr0us6qkml03t4zs4yxqr96uy73l8zq0ptc8ajuf46zngsaeh85p` | Simple and easy to use | Monica | [tx1](https://explorer.1am.xyz/tx/a80dedb13da0eb61e6a96d6ce9216508d15241b51e31a01a94bba97a4bf3f3a1?network=preprod), [tx2](https://explorer.1am.xyz/tx/c6d71205a257ad61a9924dfa024661a7c22aa9424243c64d438947ebeac8740a?network=preprod) |
 | 4 | 2026-09-22 22:36:53 | `mn_addr_preprod1yvnn6pa0m6tsaqsrjpfjl7ax3r0kkcq08gksgvxkwjlw209rtr7qpg0j6s` | Claimed swiftly, nice | Rashmi Chauhan | [tx](https://explorer.1am.xyz/tx/af051384bd729bb7a56d9edf3374eda32784dd8889d6c714614ac14ba3eb400f?network=preprod) |
 | 5 | 2026-09-22 23:04:02 | `mn_addr_preprod18js3ld8kyrsgxtvaemv0ec4hpa2aej3hx5fyfskvfwdrfx8peershsa87y` | The transaction went through on the first attempt. Excellent layout and straightforward validation process! | Siddhi | [tx1](https://explorer.1am.xyz/tx/94843dabdee86a288d389669f3b835148cdbfd5cf7a76f2eddcbe3a4abc1b2c5?network=preprod), [tx2](https://explorer.1am.xyz/tx/ed1a89c8e0c06af91c2adc5fdc8daddad99cb3e726e969604d4b8a1a017776b2?network=preprod) |
@@ -69,25 +69,25 @@ Full raw responses (timestamp, wallet, feedback, name, email, tx URLs) are colle
 
 ## What We Heard (Themes)
 
-- **Overall experience is positive** — most respondents called out the setup/onboarding flow, wallet connection, and loading states as clean, intuitive, fast, and "native"-feeling (#2, #9, #12, #13, #16, #20, #23, #25, #26, #31, #32, #35, #36, #37, #39, #40, #43, #44, #50).
-- **Privacy architecture is landing with technical users** — respondents explicitly verified on-chain that no metadata leaks through the private witness data design, and appreciated that registration doesn't leak to public view or require a Discord/Twitter link, personal data, or forms (#6, #21, #29, #32).
-- **Double-claim and access-control protection work as intended** — one user deliberately tried to resubmit the same access code and got a clear "Already Claimed" message (#11); another tested with a wallet that was never added to the allowlist and confirmed the claim was correctly rejected (#18); another separately confirmed the verification flow itself worked as expected (#33).
-- **Error/edge-case recovery is solid** — a user who deliberately rejected the Lace connection prompt saw the app reset cleanly with no broken pages (#27); another hit a brief Preprod network delay and the app still recovered and confirmed the transaction rather than hanging (#22).
+- **Overall experience is positive**: most respondents called out the setup/onboarding flow, wallet connection, and loading states as clean, intuitive, fast, and "native"-feeling (#2, #9, #12, #13, #16, #20, #23, #25, #26, #31, #32, #35, #36, #37, #39, #40, #43, #44, #50).
+- **Privacy architecture is landing with technical users**: respondents explicitly verified on-chain that no metadata leaks through the private witness data design, and appreciated that registration doesn't leak to public view or require a Discord/Twitter link, personal data, or forms (#6, #21, #29, #32).
+- **Double-claim and access-control protection work as intended**: one user deliberately tried to resubmit the same access code and got a clear "Already Claimed" message (#11); another tested with a wallet that was never added to the allowlist and confirmed the claim was correctly rejected (#18); another separately confirmed the verification flow itself worked as expected (#33).
+- **Error/edge-case recovery is solid**: a user who deliberately rejected the Lace connection prompt saw the app reset cleanly with no broken pages (#27); another hit a brief Preprod network delay and the app still recovered and confirmed the transaction rather than hanging (#22).
 - **Real bugs reported:**
-  - The contract explorer link on the landing page pointed to the wrong URL pattern (#10, Zoya) — fixed.
-  - The success popup after registration overlaps/covers the main menu (#47, Meera) — fixed.
-  - The "Connect Wallet" button hitbox is too small to tap reliably on smaller phone screens (#34, Anika) — fixed.
+  - The contract explorer link on the landing page pointed to the wrong URL pattern (#10, Zoya), fixed.
+  - The success popup after registration overlaps/covers the main menu (#47, Meera), fixed.
+  - The "Connect Wallet" button hitbox is too small to tap reliably on smaller phone screens (#34, Anika), fixed.
 - **Feature requests:**
-  - A one-click "copy transaction link" affordance next to the confirmation would save users a manual copy-paste from the explorer (#28, Kiara) — shipped (copies the transaction ID directly from the confirmation popup).
-  - A short 3-step beginner's guide on the landing page explaining the private-allowlist flow before they dive in (#48, Krishna Kumar) — shipped.
-- **Wallet-side sync latency observed by a couple of users** — one saw a brief confirmation lag before the status updated (#42, Aaryan), another saw the wallet's balance sync take a couple of minutes before the claim button activated (#49, Prisha). This is DUST/wallet-sync latency on Preprod rather than an app bug, but worth calling out since it's the top thing that could read as "broken" to a new user.
+  - A one-click "copy transaction link" affordance next to the confirmation would save users a manual copy-paste from the explorer (#28, Kiara), shipped (copies the transaction ID directly from the confirmation popup).
+  - A short 3-step beginner's guide on the landing page explaining the private-allowlist flow before they dive in (#48, Krishna Kumar), shipped.
+- **Wallet-side sync latency observed by a couple of users**: one saw a brief confirmation lag before the status updated (#42, Aaryan), another saw the wallet's balance sync take a couple of minutes before the claim button activated (#49, Prisha). This is DUST/wallet-sync latency on Preprod rather than an app bug, but worth calling out since it's the top thing that could read as "broken" to a new user.
 
 ## What We Changed
 
 | Change | Reason | Commit |
 |--------|--------|--------|
 | Fixed the contract explorer link to point to `https://explorer.preprod.midnight.network/contracts/stream/<address>` instead of the old, incorrect `/contract/<address>` pattern | Directly reported by Zoya (#10): "The contract redirection link is not opening the correct link" | First batch of Feedback Implemented and Filled in the .md files |
-| Added a "Use Cases" section to the landing page (NFT mints, DAO governance, DeFi KYC'd access, token-gated communities) | Positive feedback on clarity/onboarding (#2, #9, #12) suggested users respond well to concrete framing — a use-cases section makes it clearer who the product is for | First batch of Feedback Implemented and Filled in the .md files |
+| Added a "Use Cases" section to the landing page (NFT mints, DAO governance, DeFi KYC'd access, token-gated communities) | Positive feedback on clarity/onboarding (#2, #9, #12) suggested users respond well to concrete framing; a use-cases section makes it clearer who the product is for | First batch of Feedback Implemented and Filled in the .md files |
 | Renamed the wallet-connect button from "Connect Lace" to "Connect Wallet" | Keeps the primary CTA wallet-agnostic and consistent with general product wording, rather than naming one specific extension | First batch of Feedback Implemented and Filled in the .md files |
 | Added a "Copy transaction ID" button to the success confirmation popup | Requested by Kiara (#28): "An option to directly copy the transaction confirmation link would be a very helpful addition" | Wire the transaction id through the add_member/claim_access calls and surface a one-click copy button on the confirmation popup |
 | Repositioned the confirmation popup to sit below the header instead of covering the full viewport | Reported by Meera (#47): "The registration flow is fast, but the success popup covers the main menu" | Constrain the confirmation popup's backdrop so the main nav stays visible and usable while it's open |

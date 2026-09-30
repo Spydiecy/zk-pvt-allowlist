@@ -3,11 +3,11 @@ import { useMidnight } from '../contexts/useMidnight.tsx';
 import { CopyIcon, CheckCircleIcon } from './icons';
 
 /**
- * ResultModal — a full-screen animated popup for the outcome of a circuit
+ * ResultModal: a full-screen animated popup for the outcome of a circuit
  * call (add_member / claim_access). Replaces the old inline result card.
  *
  * The animation is hand-built with SVG + CSS (stroke-draw, spring scale,
- * particle burst) rather than a Lottie JSON file — same "cool animation"
+ * particle burst) rather than a Lottie JSON file, same "cool animation"
  * payoff with zero extra runtime dependency or third-party asset licensing
  * to track, and it's fully theme-matched to the app's purple/dark palette.
  */
@@ -23,7 +23,7 @@ const COPY: Record<string, { success: { title: string; body: string }; failed: {
   },
 };
 
-// Precompute confetti particle trajectories once per module — deterministic
+// Precompute confetti particle trajectories once per module: deterministic
 // spread, no per-render randomness/jank.
 const PARTICLES = Array.from({ length: 14 }, (_, i) => {
   const angle = (i / 14) * Math.PI * 2 + (i % 2 === 0 ? 0.2 : -0.15);
@@ -54,8 +54,8 @@ export function ResultModal() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2200);
     } catch {
-      // Clipboard API can be unavailable (older browsers, insecure context) —
-      // fail silently rather than showing a broken "copied" state.
+      // Clipboard API can be unavailable (older browsers, insecure context).
+      // Fail silently rather than showing a broken "copied" state.
     }
   }
 

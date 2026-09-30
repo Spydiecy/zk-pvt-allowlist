@@ -1,13 +1,13 @@
 import React from 'react';
 
 /**
- * MerkleDiagram — a labeled visualization of the zero-knowledge Merkle
+ * MerkleDiagram: a labeled visualization of the zero-knowledge Merkle
  * proof at the heart of the contract. Shows a small tree (visually
  * representing the real depth-10 / 1024-leaf tree) with one member's
  * proof path lit up from leaf to root, and a legend explaining what's
  * public vs private.
  *
- * Pure SVG + CSS — draws itself in on scroll/mount, no dependencies.
+ * Pure SVG + CSS. Draws itself in on scroll/mount, no dependencies.
  */
 export function MerkleDiagram({ compact = false }: { compact?: boolean }) {
   return (
@@ -100,7 +100,7 @@ export function MerkleDiagram({ compact = false }: { compact?: boolean }) {
         <div className="merkle-caption">
           <div className="merkle-caption-item">
             <span className="mc-index">01</span>
-            <p>Your secret hashes to a commitment — the leaf shown in green.</p>
+            <p>Your secret hashes to a commitment, the leaf shown in green.</p>
           </div>
           <div className="merkle-caption-item">
             <span className="mc-index">02</span>

@@ -63,8 +63,8 @@ function AppInner() {
 
             <div className="header-right">
               <WalletConnect />
-              {/* Before a wallet is connected there's nothing to "start" —
-                  connecting is the first step, and that's the wallet
+              {/* Before a wallet is connected there's nothing to "start".
+                  Connecting is the first step, and that's the wallet
                   button's job. Once connected, "Start" is the way into
                   the actual app (claim access / add member). */}
               {view === 'landing' && isConnected && (
@@ -101,10 +101,10 @@ function AppInner() {
 }
 
 /**
- * LandingView — the marketing page a first-time visitor actually sees.
+ * LandingView: the marketing page a first-time visitor actually sees.
  * Deliberately short: a headline, one real explanation of the mechanism,
  * a diagram, and how the two circuits work. No filler "use cases" grid,
- * no repeated CTA band — a developer evaluating a ZK tool wants to know
+ * no repeated CTA band. A developer evaluating a ZK tool wants to know
  * what it does and see it work, not scroll past a features carousel.
  */
 function LandingView({ onStart }: { onStart: () => void }) {
@@ -126,7 +126,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
               An admin inserts a member's commitment hash into a
               fixed-depth Merkle tree on-chain. A member later proves
               their commitment is a leaf of that tree inside a
-              zero-knowledge circuit — without revealing the secret, the
+              zero-knowledge circuit, without revealing the secret, the
               leaf's position, or their wallet.
             </p>
             <div className="hero-actions">
@@ -160,7 +160,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
               <span className="circuit-index">01</span>
             </div>
             <code className="circuit-fn">add_member(commitment: Bytes&lt;32&gt;)</code>
-            <p>Admin inserts a commitment hash as a new leaf in the tree. Only the hash is public — never the secret behind it.</p>
+            <p>Admin inserts a commitment hash as a new leaf in the tree. Only the hash is public, never the secret behind it.</p>
           </div>
           <div className="circuit-card">
             <div className="circuit-card-head">
@@ -168,7 +168,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
               <span className="circuit-index">02</span>
             </div>
             <code className="circuit-fn">claim_access(secret, path)</code>
-            <p>The circuit checks the secret's commitment resolves to the current root via the private Merkle path — both stay off-chain.</p>
+            <p>The circuit checks the secret's commitment resolves to the current root via the private Merkle path. Both stay off-chain.</p>
           </div>
           <div className="circuit-card">
             <div className="circuit-card-head">
@@ -184,7 +184,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
               <span className="circuit-index">04</span>
             </div>
             <code className="circuit-fn">members.isFull(), claims.value</code>
-            <p>Anyone can read allowlist size, total claims, and tree capacity from the ledger — none of it identifies a single member.</p>
+            <p>Anyone can read allowlist size, total claims, and tree capacity from the ledger. None of it identifies a single member.</p>
           </div>
         </div>
       </section>
@@ -196,7 +196,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
             <span className="requirements-panel-dot" />
             <span className="requirements-panel-dot" />
             <span className="requirements-panel-dot" />
-            <span className="requirements-panel-title">setup — three steps, five minutes</span>
+            <span className="requirements-panel-title">setup: three steps, five minutes</span>
           </div>
 
           <div className="requirement-step">
@@ -211,7 +211,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
             <span className="requirement-num">02</span>
             <div>
               <strong>Run the local proof server</strong>
-              <p>Proofs are generated on your machine and never leave it — this is what makes the ZK claim real, not just a UI label.</p>
+              <p>Proofs are generated on your machine and never leave it. This is what makes the ZK claim real, not just a UI label.</p>
               <code className="requirement-cmd">docker run --rm -p 6300:6300 midnightntwrk/proof-server:8.1.0</code>
             </div>
           </div>
@@ -221,7 +221,7 @@ function LandingView({ onStart }: { onStart: () => void }) {
             <div>
               <strong>Fund your wallet</strong>
               <p>
-                Get test tNIGHT/tDUST from the Preprod faucet — see the{' '}
+                Get test tNIGHT/tDUST from the Preprod faucet. See the{' '}
                 <a href="https://github.com/Spydiecy/zk-pvt-allowlist/blob/main/docs/USAGE.md" target="_blank" rel="noreferrer">usage guide</a> for the link.
               </p>
             </div>
@@ -234,20 +234,20 @@ function LandingView({ onStart }: { onStart: () => void }) {
 }
 
 /**
- * AppView — the actual product. Live on-chain stats, then the two real
+ * AppView: the actual product. Live on-chain stats, then the two real
  * actions (claim access / add member) rendered by <Allowlist />.
  */
 function AppView({ contractState }: { contractState: ReturnType<typeof useMidnight>['contractState'] }) {
   return (
     <main className="main">
       <section className="stat-strip reveal">
-        <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '—'} />
+        <StatCell label="Allowlist size" value={contractState?.memberCount?.toString() ?? '-'} />
         <span className="stat-div" />
-        <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '—'} />
+        <StatCell label="Access claimed" value={contractState?.claims?.toString() ?? '-'} />
         <span className="stat-div" />
         <StatCell
           label="Tree capacity"
-          value={contractState === null ? '—' : contractState.isFull ? 'Full' : 'Open'}
+          value={contractState === null ? '-' : contractState.isFull ? 'Full' : 'Open'}
           tone={contractState?.isFull ? 'red' : 'green'}
         />
       </section>

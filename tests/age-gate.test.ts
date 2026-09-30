@@ -1,10 +1,10 @@
 /**
- * age-gate.test.ts — Tests for the ZK Age Gate contract
+ * age-gate.test.ts: Tests for the ZK Age Gate contract
  *
  * Tests cover:
- *  1. Circuit logic  — verify_age and revoke_access behave correctly
- *  2. State transitions — access_granted and verifications update correctly
- *  3. Privacy model — birth_year never appears in ledger state
+ *  1. Circuit logic: verify_age and revoke_access behave correctly
+ *  2. State transitions: access_granted and verifications update correctly
+ *  3. Privacy model: birth_year never appears in ledger state
  */
 
 import {
@@ -141,9 +141,9 @@ describe('Age Gate Contract', () => {
     });
   });
 
-  // ── 3. Privacy model — birth_year never in ledger ─────────────────────────
+  // ── 3. Privacy model: birth_year never in ledger ─────────────────────────
   describe('Privacy model', () => {
-    it('ledger only exposes access_granted and verifications — never birth_year', () => {
+    it('ledger only exposes access_granted and verifications, never birth_year', () => {
       const { contractState } = freshState();
       const pub = getPublicState(contractState);
       expect(Object.keys(pub)).toEqual(['access_granted', 'verifications']);
@@ -154,7 +154,7 @@ describe('Age Gate Contract', () => {
       const { contract, contractState, privateState } = freshState();
       const r1 = callVerifyAge(contract, contractState, privateState, 1990n);
       const r2 = callVerifyAge(contract, contractState, privateState, 1985n);
-      // Both are 18+ — public state must be identical
+      // Both are 18+, public state must be identical
       expect(ledger(r1.contractState).access_granted).toBe(ledger(r2.contractState).access_granted);
       expect(ledger(r1.contractState).verifications).toBe(ledger(r2.contractState).verifications);
     });

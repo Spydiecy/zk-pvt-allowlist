@@ -1,5 +1,5 @@
 /**
- * contract.ts — browser-side contract interaction for the Private Allowlist.
+ * contract.ts: browser-side contract interaction for the Private Allowlist.
  * Static import so Vite bundles and resolves all bare specifiers.
  */
 
@@ -13,7 +13,7 @@ import {
 import { type Observable, map } from 'rxjs';
 import type { AgeGateProviders } from './providers.js';
 
-// Static import — Vite processes this file and rewrites bare imports to URLs
+// Static import: Vite processes this file and rewrites bare imports to URLs
 import * as Allowlist from '../contract/allowlist.js';
 
 export interface AllowlistState {
@@ -38,8 +38,8 @@ const PRIVATE_STATE_KEY = 'allowlist-private';
 
 // callTx waits indefinitely for on-chain finalization via the indexer
 // (see @midnight-ntwrk/midnight-js-contracts submitTx docs). Preprod block
-// finalization can occasionally stall, so we bound the wait client-side —
-// the transaction itself is unaffected; this only stops our UI from
+// finalization can occasionally stall, so we bound the wait client-side.
+// The transaction itself is unaffected; this only stops our UI from
 // spinning forever with no feedback.
 const CONFIRMATION_TIMEOUT_MS = 120_000;
 
@@ -48,7 +48,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
     const timer = setTimeout(() => {
       reject(new Error(
         `${label} is taking longer than expected (over ${Math.round(ms / 1000)}s). ` +
-        `The transaction may still confirm — check your wallet or the indexer before retrying.`,
+        `The transaction may still confirm. Check your wallet or the indexer before retrying.`,
       ));
     }, ms);
     promise.then(
@@ -58,7 +58,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
   });
 }
 
-// ── Hashing helpers — mirror the contract's persistentHash([secret, tag]) ────
+// ── Hashing helpers: mirror the contract's persistentHash([secret, tag]) ────
 const PAIR_TYPE = new CompactTypeVector(2, new CompactTypeBytes(32));
 
 function tagBytes(str: string): Uint8Array {
@@ -132,7 +132,7 @@ export async function joinAllowlist(
     address,
     state$,
 
-    /** One-shot fetch — used to force-refresh the UI right after a tx confirms,
+    /** One-shot fetch, used to force-refresh the UI right after a tx confirms,
      *  since the live subscription can lag behind indexer updates. */
     async refreshState(): Promise<AllowlistState> {
       return stateFromLedger(await readCurrentLedger());

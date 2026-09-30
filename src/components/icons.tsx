@@ -1,11 +1,11 @@
 import React from 'react';
 
 /**
- * icons.tsx — a small hand-drawn icon set used across the app.
+ * icons.tsx: a small hand-drawn icon set used across the app.
  *
  * Replaces emoji (🌙 🔒 ⚡ 🎲 ✅ ❌) with consistent, theme-matched SVG
  * strokes. Emoji render differently per OS/browser and read as "default
- * template" — a single custom icon language is one of the highest-leverage
+ * template", a single custom icon language is one of the highest-leverage
  * changes for a premium feel.
  */
 

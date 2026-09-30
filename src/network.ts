@@ -305,7 +305,7 @@ function cliMain(argv: string[]): number {
   if (candidate !== 'undeployed') {
     const seed = loadState()?.wallets?.[candidate]?.seed;
     if (!seed) {
-      process.stdout.write(`Wallet not yet generated — run \`npm run setup\` to fund and deploy.\n`);
+      process.stdout.write(`Wallet not yet generated, run \`npm run setup\` to fund and deploy.\n`);
     }
   }
   return 0;

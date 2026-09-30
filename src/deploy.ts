@@ -1,5 +1,5 @@
 /**
- * deploy.ts — Deploy the counter contract to Midnight preview network.
+ * deploy.ts: Deploy the counter contract to Midnight preview network.
  */
 import * as fs from 'node:fs';
 import * as path from 'node:path';

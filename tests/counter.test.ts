@@ -1,10 +1,10 @@
 /**
- * counter.test.ts — Tests for the Privacy-Preserving Counter contract
+ * counter.test.ts: Tests for the Privacy-Preserving Counter contract
  *
  * Tests cover:
- *  1. Circuit logic  — increment and reset circuits behave correctly
- *  2. State transitions — counter accumulates across multiple calls
- *  3. Privacy model — increment_by (private input) never appears in ledger
+ *  1. Circuit logic: increment and reset circuits behave correctly
+ *  2. State transitions: counter accumulates across multiple calls
+ *  3. Privacy model: increment_by (private input) never appears in ledger
  */
 
 import {
@@ -134,8 +134,8 @@ describe('Counter Contract', () => {
     });
   });
 
-  // ── 3. Privacy model — private inputs never in ledger ─────────────────────
-  describe('Privacy model — private inputs never exposed', () => {
+  // ── 3. Privacy model: private inputs never in ledger ─────────────────────
+  describe('Privacy model: private inputs never exposed', () => {
     it('ledger only exposes count, not increment_by', () => {
       const { contractState } = freshState();
       const publicState = ledger(contractState.data);
@@ -154,7 +154,7 @@ describe('Counter Contract', () => {
       const pathB_r1 = callIncrement(contract, contractState, privateState, 5n);
       const pathB_r2 = callIncrement(contract, pathB_r1.chargedState, pathB_r1.privateState, 5n);
 
-      // Public ledger states are identical — private increments leave no trace
+      // Public ledger states are identical, private increments leave no trace
       expect(ledger(pathA_r2.chargedState).count).toBe(10n);
       expect(ledger(pathB_r2.chargedState).count).toBe(10n);
     });

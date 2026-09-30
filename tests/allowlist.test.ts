@@ -1,10 +1,10 @@
 /**
- * allowlist.test.ts — Tests for the Private Allowlist Access contract
+ * allowlist.test.ts: Tests for the Private Allowlist Access contract
  *
  * Tests cover:
- *  1. Circuit logic — add_member and claim_access behave correctly
- *  2. State transitions — nullifiers and claims counter update correctly
- *  3. Privacy model — secret never appears in ledger state; nullifier
+ *  1. Circuit logic: add_member and claim_access behave correctly
+ *  2. State transitions: nullifiers and claims counter update correctly
+ *  3. Privacy model: secret never appears in ledger state; nullifier
  *     reveals only that *a* claim happened, never who made it
  */
 
@@ -125,7 +125,7 @@ describe('Private Allowlist Contract', () => {
     it('claim_access rejects a proof for someone never added to the allowlist', () => {
       const { contract, contractState, privateState } = freshState();
       // Add one member, but try to claim with a completely different secret + a
-      // path constructed for the member that IS on the tree — the leaf won't
+      // path constructed for the member that IS on the tree. The leaf won't
       // match the outsider's own commitment, so this must fail.
       const memberSecret = secretOf(4);
       const added = addMemberAndGetPath(contract, contractState, privateState, memberSecret);
@@ -171,9 +171,9 @@ describe('Private Allowlist Contract', () => {
     });
   });
 
-  // ── 3. Privacy model — secret never in ledger, nullifier reveals nothing ──
+  // ── 3. Privacy model: secret never in ledger, nullifier reveals nothing ──
   describe('Privacy model', () => {
-    it('ledger only exposes members, nullifiers, and claims — never a secret', () => {
+    it('ledger only exposes members, nullifiers, and claims, never a secret', () => {
       const { contractState } = freshState();
       const pub = ledger(contractState.data);
       expect(Object.keys(pub).sort()).toEqual(['claims', 'members', 'nullifiers'].sort());
@@ -192,7 +192,7 @@ describe('Private Allowlist Contract', () => {
       const addedB = addMemberAndGetPath(contract2, cs2, ps2, secretB);
       const rB = callClaimAccess(contract2, addedB.contractState, addedB.privateState, secretB, addedB.path);
 
-      // Both end up with exactly 1 claim and 1 nullifier — an observer
+      // Both end up with exactly 1 claim and 1 nullifier. An observer
       // cannot distinguish which member claimed just by looking at the ledger.
       expect(ledger(rA.contractState).claims).toBe(ledger(rB.contractState).claims);
       expect(ledger(rA.contractState).nullifiers.size()).toBe(ledger(rB.contractState).nullifiers.size());
@@ -204,8 +204,8 @@ describe('Private Allowlist Contract', () => {
       const added = addMemberAndGetPath(contract, contractState, privateState, secret);
       const r = callClaimAccess(contract, added.contractState, added.privateState, secret, added.path);
       const stateStr = r.contractState?.toString?.() ?? '';
-      // The raw secret (all 0x37 bytes) must not appear in the state dump —
-      // only its one-way hashes (commitment, nullifier) do.
+      // The raw secret (all 0x37 bytes) must not appear in the state dump.
+      // Only its one-way hashes (commitment, nullifier) do.
       const secretHex = Buffer.from(secret).toString('hex');
       expect(stateStr).not.toContain(secretHex);
     });

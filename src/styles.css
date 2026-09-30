@@ -1,5 +1,5 @@
 /* ============================================================================
-   Private Allowlist — design system
+   Private Allowlist: design system
    A restrained, single-accent dark theme. Spacing on a 4px scale, type on a
    defined scale, one accent color used deliberately rather than everywhere.
    ============================================================================ */
@@ -21,7 +21,7 @@
   --muted:      #82829c;
   --faint:      #55566b;
 
-  /* Accent — a warm, low moon-gold. Deliberately not the default SaaS violet;
+  /* Accent: a warm, low moon-gold. Deliberately not the default SaaS violet;
      ties to Midnight's night theme rather than a generic template color. */
   --accent:      #d8a34d;
   --accent-h:    #f0bd6a;
@@ -89,7 +89,7 @@ a { color: inherit; }
 .bg-field {
   /* A single off-center glow, low in the frame, plus a sparse dot scatter
      rather than the generic "two symmetric radial blobs over a grid" hero
-     background — meant to read as a night sky / scattered Merkle leaves
+     background. Meant to read as a night sky / scattered Merkle leaves
      rather than a default gradient-mesh template. */
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background:
@@ -114,7 +114,7 @@ a { color: inherit; }
 /* ── Header ──────────────────────────────────────────────────────────────── */
 /* Fixed height, no wrapping, three flex zones (logo / nav / wallet) that
    never fight for the same line. The old version let the logo's two-line
-   text block collide with the nav on real-world widths — this version
+   text block collide with the nav on real-world widths. This version
    gives each zone a hard min-width=0 + shrink budget so nothing overlaps. */
 .header {
   height: 64px;
@@ -175,7 +175,7 @@ a { color: inherit; }
 }
 
 /* ── Main / layout ───────────────────────────────────────────────────────── */
-/* Generous, real spacing between sections — 96px, not 56px. Compact stacking
+/* Generous, real spacing between sections: 96px, not 56px. Compact stacking
    is exactly what read as "AI generated": everything crammed to fit above
    the fold. A real docs/marketing page breathes. */
 .main {
@@ -193,7 +193,7 @@ a { color: inherit; }
   margin-bottom: 32px;
 }
 
-/* ── Hero — stacked headline left, diagram right ─────────────────────────── */
+/* ── Hero: stacked headline left, diagram right ─────────────────────────── */
 .hero-top {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
@@ -249,7 +249,7 @@ a { color: inherit; }
   .hero-title { font-size: 32px; }
 }
 
-/* ── Circuit grid — real function signatures, not marketing copy ────────── */
+/* ── Circuit grid: real function signatures, not marketing copy ────────── */
 .circuit-row { padding-top: 4px; }
 .circuit-grid {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
@@ -287,8 +287,8 @@ a { color: inherit; }
 
 .hero-diagram { min-width: 0; }
 
-/* ── Live stat strip — a data readout, not icon chips ────────────────────── */
-/* No icon-in-a-rounded-square badges — those are the same "AI dashboard"
+/* ── Live stat strip: a data readout, not icon chips ────────────────────── */
+/* No icon-in-a-rounded-square badges. Those are the same "AI dashboard"
    tell we already removed from the landing page. This reads like a status
    line: a monospace label, a large tabular number, nothing decorative. */
 .stat-strip {
@@ -321,7 +321,7 @@ a { color: inherit; }
   .stat-cell { padding: 0 4px; }
 }
 
-/* ── Before you start — a terminal-styled setup panel ─────────────────────── */
+/* ── Before you start: a terminal-styled setup panel ─────────────────────── */
 /* The previous version was three cramped cards with a docker command that
    word-broke mid-token ("midnightn / twrk"). This reads as a small
    terminal session instead: one dark panel, numbered lines, the actual
@@ -376,7 +376,7 @@ a { color: inherit; }
   .requirement-num { display: none; }
 }
 
-/* ── Action panel — the core feature, two-column form layout ────────────── */
+/* ── Action panel: the core feature, two-column form layout ────────────── */
 .action-panel {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -409,7 +409,7 @@ a { color: inherit; }
 .action-col h3 { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 10px; }
 .action-col .sub { font-size: 13.5px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; }
 
-/* File-tab style, not a rounded pill switcher — an underline on the active
+/* File-tab style, not a rounded pill switcher. An underline on the active
    tab, plain text otherwise. Reads like an editor's tab bar, not a SaaS
    segmented control. */
 .tab-group {
@@ -428,6 +428,13 @@ a { color: inherit; }
   content: '';
   position: absolute; left: 0; right: 0; bottom: 0;
   height: 2px; background: var(--accent);
+}
+/* Tabs already show state via the underline above. A full box outline on
+   focus/click reads as a leftover default button style, not a tab. */
+.tab-btn:focus-visible {
+  outline: none;
+  border-radius: 4px;
+  box-shadow: 0 2px 0 0 var(--accent);
 }
 
 .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 18px; }
@@ -452,7 +459,7 @@ a { color: inherit; }
 .form-hint.ok  { color: var(--green); }
 .form-hint.bad { color: var(--red); }
 
-/* A plain annotated line instead of a boxed, icon'd callout — matches the
+/* A plain annotated line instead of a boxed, icon'd callout. Matches the
    circuit-fn code-line style already used on the landing page rather than
    introducing a new "info box" pattern. */
 .zk-note {
@@ -466,7 +473,7 @@ a { color: inherit; }
   font-size: 12px; color: var(--faint); margin-top: 14px; line-height: 1.6;
 }
 
-/* ── Result (inline error card only — success/fail now use the modal) ──── */
+/* ── Result (inline error card only; success/fail now use the modal) ──── */
 .result {
   display: flex; align-items: flex-start; gap: 12px;
   border-radius: var(--r-md); padding: 14px 16px; margin-top: 16px;
@@ -490,7 +497,7 @@ a { color: inherit; }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn:active:not(:disabled) { transform: scale(0.97); }
 
-/* Enlarge the tap target on touch/small screens — the default 11px vertical
+/* Enlarge the tap target on touch/small screens. The default 11px vertical
    padding renders under the ~44px minimum recommended hitbox on phones.
    See docs/FEEDBACK.md #34 (wallet-connect button hard to tap on mobile). */
 @media (max-width: 640px) {
@@ -636,7 +643,7 @@ a { color: inherit; }
 .result-modal-backdrop {
   /* Sits below the sticky header (z-index: 50 there) rather than covering the
      full viewport, so the main nav/menu stays visible and usable while the
-     confirmation is showing — see docs/FEEDBACK.md #47. */
+     confirmation is showing. See docs/FEEDBACK.md #47. */
   position: fixed; top: 68px; right: 0; bottom: 0; left: 0; z-index: 40;
   background: rgba(6,6,10,0.65);
   backdrop-filter: blur(6px);

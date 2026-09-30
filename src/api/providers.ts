@@ -57,7 +57,7 @@ function getFirstCompatibleWallet(): InitialAPI | undefined {
 }
 
 export async function connectToWallet(networkId: string): Promise<ConnectedAPI> {
-  // Poll for wallet availability — the wallet extension can take a moment to inject window.midnight
+  // Poll for wallet availability: the wallet extension can take a moment to inject window.midnight
   const initialAPI = await firstValueFrom(
     interval(200).pipe(
       map(() => getFirstCompatibleWallet()),
@@ -76,7 +76,7 @@ export async function connectToWallet(networkId: string): Promise<ConnectedAPI> 
     ),
   );
 
-  // Attempt connect with retries — the wallet may show "locked" on first attempt
+  // Attempt connect with retries. The wallet may show "locked" on first attempt
   // even when unlocked if the extension service worker is just waking up.
   let lastError: Error | null = null;
   for (let attempt = 1; attempt <= 3; attempt++) {
@@ -150,7 +150,7 @@ export async function initializeProviders(connectedAPI: ConnectedAPI): Promise<A
   return {
     privateStateProvider,
     zkConfigProvider,
-    // Use proverServerUri from wallet config — the wallet handles the proof server URL
+    // Use proverServerUri from wallet config: the wallet handles the proof server URL
     proofProvider: httpClientProofProvider(
       config.proverServerUri ?? 'http://localhost:6300',
       zkConfigProvider,

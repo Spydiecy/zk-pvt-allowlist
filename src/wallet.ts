@@ -166,7 +166,7 @@ export async function createWallet(opts: CreateWalletOptions): Promise<WalletCon
 
 /**
  * Serialize each child wallet's current state and persist it for the next run.
- * Safe to call multiple times. Logs but does not throw on individual failures —
+ * Safe to call multiple times. Logs but does not throw on individual failures:
  * losing one child's state means the next run re-syncs that child only.
  */
 export async function persistWalletState(
